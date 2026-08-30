@@ -1,102 +1,205 @@
-<x-layouts.app title="Dashboard" header="Financial Dashboard" subheader="Ringkasan arus kas, tabungan, dan anggaran keuangan pribadi">
+<x-layouts.app title="Dashboard" header="Dashboard Keuangan Pribadi" subheader="Ringkasan arus kas, pembagian gaji, tabungan, dan anggaran bulanan" x-data="{ createAllocModal: false, balanceModal: false }">
 
-    <!-- Filter Periode Bulan / Tahun -->
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-[#111827]/70 border border-slate-800/80 backdrop-blur-md">
-        <div class="flex items-center gap-2 text-xs font-semibold text-slate-300">
-            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-            </svg>
-            <span>Periode Data: <span class="text-white">{{ \Carbon\Carbon::createFromDate($year, $month, 1)->translatedFormat('F Y') }}</span></span>
+    <!-- Header Banner Periode Bulan / Tahun & Total In/Out (Sesuai Spreadsheet) -->
+    <div class="space-y-4">
+        
+        <!-- Header Controls & Top Banner -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-[#111827]/80 border border-slate-800/80 backdrop-blur-md">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-300 font-semibold uppercase">Periode Aktif</span>
+                    <h3 class="text-lg font-black text-white">{{ \Carbon\Carbon::createFromDate($year, $month, 1)->translatedFormat('F Y') }}</h3>
+                </div>
+            </div>
+
+            <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-2">
+                <select name="month" class="px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-indigo-500">
+                    @for ($m = 1; $m <= 12; $m++)
+                        <option value="{{ $m }}" {{ $month == $m ? 'selected' : '' }}>
+                            {{ \Carbon\Carbon::createFromDate(null, $m, 1)->translatedFormat('F') }}
+                        </option>
+                    @endfor
+                </select>
+                <select name="year" class="px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-indigo-500">
+                    @for ($y = Carbon\Carbon::now()->year - 2; $y <= Carbon\Carbon::now()->year + 1; $y++)
+                        <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
+                    @endfor
+                </select>
+                <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition cursor-pointer">
+                    Lihat
+                </button>
+            </form>
         </div>
 
-        <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-2">
-            <select name="month" class="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500">
-                @for ($m = 1; $m <= 12; $m++)
-                    <option value="{{ $m }}" {{ $month == $m ? 'selected' : '' }}>
-                        {{ \Carbon\Carbon::createFromDate(null, $m, 1)->translatedFormat('F') }}
-                    </option>
-                @endfor
-            </select>
-            <select name="year" class="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500">
-                @for ($y = Carbon\Carbon::now()->year - 2; $y <= Carbon\Carbon::now()->year + 1; $y++)
-                    <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
-                @endfor
-            </select>
-            <button type="submit" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition cursor-pointer">
-                Terapkan
-            </button>
-        </form>
-    </div>
-
-    <!-- 6 Executive Financial Stat Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        
-        <!-- Total Pemasukan -->
-        <x-stat-card title="Total Pemasukan Bulan Ini" 
-                     value="Rp {{ number_format($metrics['income_month'], 0, ',', '.') }}" 
-                     subtitle="Pemasukan operasional & sampingan" 
-                     color="emerald">
-            <x-slot:icon>
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
-            </x-slot:icon>
-        </x-stat-card>
-
-        <!-- Total Pengeluaran -->
-        <x-stat-card title="Total Pengeluaran Bulan Ini" 
-                     value="Rp {{ number_format($metrics['expense_month'], 0, ',', '.') }}" 
-                     subtitle="Pengeluaran konsumtif & tagihan" 
-                     color="rose">
-            <x-slot:icon>
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/></svg>
-            </x-slot:icon>
-        </x-stat-card>
-
-        <!-- Surplus Bulan Ini -->
-        <x-stat-card title="Surplus / Arus Kas Bersih" 
-                     value="Rp {{ number_format($metrics['net_cashflow_month'], 0, ',', '.') }}" 
-                     subtitle="{{ $metrics['net_cashflow_month'] >= 0 ? 'Surplus bulan ini (Income - Expense)' : 'Defisit bulan ini' }}" 
-                     color="{{ $metrics['net_cashflow_month'] >= 0 ? 'cyan' : 'rose' }}">
-            <x-slot:icon>
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-            </x-slot:icon>
-        </x-stat-card>
-
-        <!-- Kas Operasional Tersedia -->
-        <x-stat-card title="Kas Operasional Tersedia (Free Cash)" 
-                     value="Rp {{ number_format($metrics['free_cash_balance'], 0, ',', '.') }}" 
-                     subtitle="Saldo kas likuid di dompet & rekening" 
-                     color="indigo">
-            <x-slot:icon>
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-            </x-slot:icon>
-        </x-stat-card>
-
-        <!-- Total Tabungan Terkumpul -->
-        <x-stat-card title="Total Tabungan Terkumpul" 
-                     value="Rp {{ number_format($metrics['total_savings'], 0, ',', '.') }}" 
-                     subtitle="Alokasi tabungan: {{ $metrics['saving_rate_month'] }}% dari gaji bulan ini" 
-                     color="amber">
-            <x-slot:icon>
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </x-slot:icon>
-        </x-stat-card>
-
-        <!-- Target & Progress Tabungan Global -->
-        <x-stat-card title="Target Tabungan Global" 
-                     value="{{ $metrics['saving_progress_pct'] }}%" 
-                     subtitle="Terkumpul dari Rp {{ number_format($metrics['total_target_savings'], 0, ',', '.') }}" 
-                     color="cyan">
-            <x-slot:icon>
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            </x-slot:icon>
-            <div class="w-full bg-slate-800 rounded-full h-2 mt-3 overflow-hidden border border-slate-700">
-                <div class="bg-gradient-to-r from-cyan-500 to-emerald-400 h-2 rounded-full transition-all duration-500" style="width: {{ $metrics['saving_progress_pct'] }}%"></div>
+        <!-- 3 Kartu Banner Utama (Format Spreadsheet) -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            
+            <!-- TOTAL SELURUH UANG MASUK -->
+            <div class="p-5 rounded-2xl bg-gradient-to-br from-slate-900 to-[#111827] border border-emerald-500/30 shadow-lg glow-emerald">
+                <div class="flex items-center justify-between text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">
+                    <span>TOTAL SELURUH UANG MASUK</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
+                </div>
+                <h3 class="text-2xl sm:text-3xl font-black text-white font-mono mt-2">
+                    Rp {{ number_format($metrics['income_month'], 0, ',', '.') }}
+                </h3>
+                <p class="text-[11px] text-slate-300 mt-1">Total pendapatan & gaji bulan ini</p>
             </div>
-        </x-stat-card>
+
+            <!-- TOTAL SELURUH UANG KELUAR -->
+            <div class="p-5 rounded-2xl bg-gradient-to-br from-slate-900 to-[#111827] border border-rose-500/30 shadow-lg glow-rose">
+                <div class="flex items-center justify-between text-xs font-bold text-rose-400 uppercase tracking-wider mb-1">
+                    <span>TOTAL SELURUH UANG KELUAR</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/></svg>
+                </div>
+                <h3 class="text-2xl sm:text-3xl font-black text-white font-mono mt-2">
+                    Rp {{ number_format($metrics['expense_month'], 0, ',', '.') }}
+                </h3>
+                <p class="text-[11px] text-slate-300 mt-1">Total pengeluaran harian & tagihan</p>
+            </div>
+
+            <!-- TOTAL TABUNGAN -->
+            <div class="p-5 rounded-2xl bg-gradient-to-br from-slate-900 to-[#111827] border border-cyan-500/30 shadow-lg">
+                <div class="flex items-center justify-between text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1">
+                    <span>TOTAL TABUNGAN TERKUMPUL</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <h3 class="text-2xl sm:text-3xl font-black text-white font-mono mt-2">
+                    Rp {{ number_format($metrics['total_savings'], 0, ',', '.') }}
+                </h3>
+                <p class="text-[11px] text-slate-300 mt-1">Saldo aset tabungan & dana darurat</p>
+            </div>
+
+        </div>
 
     </div>
 
-    <!-- Charts Section (2 Columns) -->
+    <!-- SECTION KHUSUS: KESIMPULAN & PEMBAGIAN GAJI (Format Spreadsheet Anda) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- KESIMPULAN KAS & SALDO (Kiri) -->
+        <div class="bg-[#111827]/90 border border-slate-800/80 rounded-2xl p-5 space-y-4 backdrop-blur-md shadow-xl flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <h3 class="text-sm font-bold text-white tracking-wide">KESIMPULAN SALDO</h3>
+                    <a href="{{ route('salary-allocations.index', ['month' => $month, 'year' => $year]) }}" class="text-xs text-indigo-400 hover:underline">Kelola &rarr;</a>
+                </div>
+
+                <div class="space-y-3 mt-4">
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800/60">
+                        <span class="text-xs font-semibold text-slate-300 uppercase">CASH AWAL</span>
+                        <span class="text-sm font-mono font-bold text-white">Rp {{ number_format($balanceData['cash_initial'], 0, ',', '.') }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800/60">
+                        <span class="text-xs font-semibold text-slate-300 uppercase">SALDO AWAL</span>
+                        <span class="text-sm font-mono font-bold text-white">Rp {{ number_format($balanceData['bank_initial'], 0, ',', '.') }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                        <div>
+                            <span class="text-xs font-bold text-emerald-400 uppercase">CASH AKHIR</span>
+                            <span class="text-[10px] text-slate-300 block">(Estimasi tunai)</span>
+                        </div>
+                        <span class="text-base font-mono font-black text-emerald-400">Rp {{ number_format($balanceData['cash_final'], 0, ',', '.') }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+                        <div>
+                            <span class="text-xs font-bold text-cyan-400 uppercase">SALDO AKHIR</span>
+                            <span class="text-[10px] text-slate-300 block">(Estimasi rekening)</span>
+                        </div>
+                        <span class="text-base font-mono font-black text-cyan-400">Rp {{ number_format($balanceData['bank_final'], 0, ',', '.') }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-800/80">
+                <a href="{{ route('salary-allocations.index', ['month' => $month, 'year' => $year]) }}" class="w-full block py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition text-center">
+                    Buka Rincian Saldo & Alokasi
+                </a>
+            </div>
+        </div>
+
+        <!-- PEMBAGIAN GAJI DENGAN STATUS UNPAID / PAID (Kanan - 2 Kolom) -->
+        <div class="lg:col-span-2 bg-[#111827]/90 border border-slate-800/80 rounded-2xl p-5 space-y-4 backdrop-blur-md shadow-xl">
+            
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-3">
+                    <div>
+                        <h3 class="text-sm font-bold text-white tracking-wide">PEMBAGIAN GAJI</h3>
+                        <p class="text-xs text-slate-300">Pos pengeluaran terencana & status pembayaran</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono font-bold text-emerald-400">
+                        Total Gaji: Rp {{ number_format($balanceData['total_salary'], 0, ',', '.') }}
+                    </div>
+                    <a href="{{ route('salary-allocations.index', ['month' => $month, 'year' => $year]) }}" class="text-xs text-emerald-400 hover:underline">Kelola &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Tabel Pos Gaji & Status UNPAID / PAID -->
+            <div class="overflow-x-auto rounded-xl border border-slate-800/80">
+                <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="bg-slate-900 text-slate-300 uppercase text-[10px] font-bold tracking-wider border-b border-slate-800">
+                        <tr>
+                            <th class="py-3 px-4">Pos Pengeluaran</th>
+                            <th class="py-3 px-4 text-right">Nominal</th>
+                            <th class="py-3 px-4 text-center">Status Pembayaran</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60">
+                        @forelse ($allocationsData['items'] as $item)
+                            <tr class="hover:bg-slate-800/30 transition {{ $item->isPaid() ? 'bg-emerald-500/5' : '' }}">
+                                <td class="py-3 px-4 font-semibold text-white">
+                                    {{ $item->item_name }}
+                                </td>
+                                <td class="py-3 px-4 text-right font-mono font-bold text-white">
+                                    Rp {{ number_format($item->amount, 0, ',', '.') }}
+                                </td>
+                                <td class="py-3 px-4 text-center">
+                                    <form method="POST" action="{{ route('salary-allocations.toggle', $item->id) }}" class="inline">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" title="Klik untuk mengubah status PAID/UNPAID" 
+                                                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider transition duration-150 cursor-pointer shadow-sm {{ $item->isPaid() ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30' }}">
+                                            @if ($item->isPaid())
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                                PAID
+                                            @else
+                                                <span class="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse"></span>
+                                                UNPAID
+                                            @endif
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="py-8 text-center text-slate-300">
+                                    Belum ada pos pembagian gaji untuk bulan ini.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Sub Summary -->
+            <div class="flex items-center justify-between text-xs text-slate-300 pt-1 font-medium">
+                <span>Terbayar: <strong class="text-emerald-400 font-mono">Rp {{ number_format($allocationsData['total_paid'], 0, ',', '.') }}</strong></span>
+                <span>Belum Terbayar: <strong class="text-rose-400 font-mono">Rp {{ number_format($allocationsData['total_unpaid'], 0, ',', '.') }}</strong></span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Charts Section -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- Bar Chart: 6 Months Trend -->
@@ -104,7 +207,7 @@
             <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-800/80">
                 <div>
                     <h3 class="text-sm font-bold text-white tracking-wide">Tren Keuangan 6 Bulan Terakhir</h3>
-                    <p class="text-xs text-slate-300">Perbandingan pemasukan, pengeluaran, dan tabungan</p>
+                    <p class="text-xs text-slate-300">Perbandingan uang masuk, keluar, dan tabungan</p>
                 </div>
             </div>
             <div class="h-72 w-full relative">
@@ -123,7 +226,6 @@
             <div class="h-64 w-full flex items-center justify-center relative">
                 @if (empty($expenseCategories['data']))
                     <div class="text-center text-slate-300 text-xs">
-                        <svg class="w-8 h-8 mx-auto mb-2 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
                         Belum ada data pengeluaran bulan ini.
                     </div>
                 @else
@@ -134,120 +236,52 @@
 
     </div>
 
-    <!-- Widgets: Budget Progress & Saving Goals & Recent Transactions -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <!-- Budget Health Widget -->
-        <div class="bg-[#111827]/80 border border-slate-800/80 rounded-2xl p-5 sm:p-6 backdrop-blur-md shadow-xl space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
-                <h3 class="text-sm font-bold text-white">Status Pagu Anggaran (Budget)</h3>
-                <a href="{{ route('budgets.index', ['month' => $month, 'year' => $year]) }}" class="text-xs text-emerald-400 hover:underline">Kelola &rarr;</a>
-            </div>
-
-            @if (empty($budgetSummary['items']))
-                <div class="py-8 text-center text-slate-300 text-xs">
-                    Belum ada anggaran yang diset untuk bulan ini.
-                    <div class="mt-3">
-                        <a href="{{ route('budgets.index') }}" class="inline-flex px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold transition">Buat Budget Baru</a>
-                    </div>
-                </div>
-            @else
-                <div class="space-y-3 max-h-60 overflow-y-auto pr-1">
-                    @foreach ($budgetSummary['items'] as $b)
-                        <div class="space-y-1.5 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/60">
-                            <div class="flex items-center justify-between text-xs">
-                                <span class="font-semibold text-white">{{ $b['category_name'] }}</span>
-                                <span class="font-mono text-slate-400">Rp {{ number_format($b['spent'], 0, ',', '.') }} / {{ number_format($b['amount'], 0, ',', '.') }}</span>
-                            </div>
-                            <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
-                                <div class="h-2 rounded-full transition-all duration-300 {{ $b['percentage'] > 100 ? 'bg-rose-500' : ($b['percentage'] > 75 ? 'bg-amber-400' : 'bg-emerald-500') }}" style="width: {{ min(100, $b['percentage']) }}%"></div>
-                            </div>
-                            <div class="flex items-center justify-between text-[11px]">
-                                <span class="{{ $b['is_over_budget'] ? 'text-rose-400 font-bold' : 'text-slate-300' }}">
-                                    {{ $b['is_over_budget'] ? '⚠️ Over Budget (' . $b['percentage'] . '%)' : 'Terpakai: ' . $b['percentage'] . '%' }}
-                                </span>
-                                <span class="text-slate-300 font-medium">Sisa: Rp {{ number_format($b['remaining'], 0, ',', '.') }}</span>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            @endif
-        </div>
-
-        <!-- Saving Goals Widget -->
-        <div class="bg-[#111827]/80 border border-slate-800/80 rounded-2xl p-5 sm:p-6 backdrop-blur-md shadow-xl space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
-                <h3 class="text-sm font-bold text-white">Target Tabungan Aktif</h3>
-                <a href="{{ route('saving-goals.index') }}" class="text-xs text-cyan-400 hover:underline">Semua Target &rarr;</a>
-            </div>
-
-            @if ($savingGoals->isEmpty())
-                <div class="py-8 text-center text-slate-300 text-xs">
-                    Belum ada target tabungan yang dibuat.
-                    <div class="mt-3">
-                        <a href="{{ route('saving-goals.index') }}" class="inline-flex px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold transition">Buat Target Tabungan</a>
-                    </div>
-                </div>
-            @else
-                <div class="space-y-3">
-                    @foreach ($savingGoals as $goal)
-                        <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800/60 space-y-2">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-white">{{ $goal->name }}</span>
-                                <span class="text-xs font-bold text-cyan-400">{{ $goal->progress_percentage }}%</span>
-                            </div>
-                            <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
-                                <div class="h-2 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-400" style="width: {{ $goal->progress_percentage }}%"></div>
-                            </div>
-                            <div class="flex items-center justify-between text-[11px] text-slate-300 font-mono">
-                                <span>Rp {{ number_format($goal->current_amount, 0, ',', '.') }}</span>
-                                <span>Target: Rp {{ number_format($goal->target_amount, 0, ',', '.') }}</span>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            @endif
-        </div>
-
-        <!-- Recent Transactions Table -->
-        <div class="bg-[#111827]/80 border border-slate-800/80 rounded-2xl p-5 sm:p-6 backdrop-blur-md shadow-xl space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+    <!-- Recent Transactions Table -->
+    <div class="bg-[#111827]/80 border border-slate-800/80 rounded-2xl p-5 sm:p-6 backdrop-blur-md shadow-xl space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div>
                 <h3 class="text-sm font-bold text-white">Transaksi Terbaru</h3>
-                <a href="{{ route('transactions.index') }}" class="text-xs text-indigo-400 hover:underline">Lihat Semua &rarr;</a>
+                <p class="text-xs text-slate-300">Daftar mutasi masuk dan keluar terkini</p>
             </div>
-
-            @if ($recentTransactions->isEmpty())
-                <div class="py-8 text-center text-slate-300 text-xs">Belum ada riwayat transaksi.</div>
-            @else
-                <div class="space-y-2.5">
-                    @foreach ($recentTransactions as $tx)
-                        <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/40 border border-slate-800/60 hover:bg-slate-800/50 transition">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 {{ $tx->type->value === 'income' ? 'bg-emerald-500/10 text-emerald-400' : ($tx->type->value === 'expense' ? 'bg-rose-500/10 text-rose-400' : 'bg-amber-500/10 text-amber-400') }}">
-                                    @if ($tx->type->value === 'income')
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
-                                    @elseif ($tx->type->value === 'expense')
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/></svg>
-                                    @else
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                    @endif
-                                </div>
-                                <div class="min-w-0">
-                                    <p class="text-xs font-semibold text-white truncate">{{ $tx->description ?: ($tx->category?->name ?: $tx->type->label()) }}</p>
-                                    <p class="text-[10px] text-slate-300">{{ \Carbon\Carbon::parse($tx->transaction_date)->translatedFormat('d M Y') }} • {{ $tx->paymentMethod?->name ?? 'Kas' }}</p>
-                                </div>
-                            </div>
-                            <div class="text-right flex-shrink-0">
-                                <span class="text-xs font-mono font-bold {{ $tx->type->value === 'income' ? 'text-emerald-400' : ($tx->type->value === 'expense' ? 'text-rose-400' : 'text-amber-400') }}">
-                                    {{ $tx->type->value === 'income' ? '+' : ($tx->type->value === 'expense' ? '-' : '•') }} Rp {{ number_format($tx->amount, 0, ',', '.') }}
-                                </span>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            @endif
+            <a href="{{ route('transactions.index') }}" class="text-xs text-indigo-400 hover:underline">Lihat Semua Riwayat &rarr;</a>
         </div>
 
+        @if ($recentTransactions->isEmpty())
+            <div class="py-8 text-center text-slate-300 text-xs">Belum ada riwayat transaksi.</div>
+        @else
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="bg-slate-900/60 text-slate-300 uppercase text-[10px] font-bold tracking-wider border-b border-slate-800">
+                        <tr>
+                            <th class="py-3 px-4">Tanggal</th>
+                            <th class="py-3 px-4">Tipe</th>
+                            <th class="py-3 px-4">Kategori / Deskripsi</th>
+                            <th class="py-3 px-4">Metode Bayar</th>
+                            <th class="py-3 px-4 text-right">Nominal</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60">
+                        @foreach ($recentTransactions as $tx)
+                            <tr class="hover:bg-slate-800/30 transition">
+                                <td class="py-3 px-4 font-mono text-slate-300">{{ \Carbon\Carbon::parse($tx->transaction_date)->translatedFormat('d M Y') }}</td>
+                                <td class="py-3 px-4">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-bold {{ $tx->type->value === 'income' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : ($tx->type->value === 'expense' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20') }}">
+                                        {{ $tx->type->label() }}
+                                    </span>
+                                </td>
+                                <td class="py-3 px-4 text-white font-medium">
+                                    {{ $tx->description ?: ($tx->category?->name ?: '-') }}
+                                </td>
+                                <td class="py-3 px-4 text-slate-300">{{ $tx->paymentMethod?->name ?? 'Kas / Tunai' }}</td>
+                                <td class="py-3 px-4 text-right font-mono font-bold text-sm {{ $tx->type->value === 'income' ? 'text-emerald-400' : ($tx->type->value === 'expense' ? 'text-rose-400' : 'text-amber-400') }}">
+                                    {{ $tx->type->value === 'income' ? '+' : ($tx->type->value === 'expense' ? '-' : '•') }} Rp {{ number_format($tx->amount, 0, ',', '.') }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
     </div>
 
     <!-- Chart.js Scripts Initialization -->

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\BudgetService;
 use App\Services\DashboardService;
+use App\Services\SalaryAllocationService;
 use App\Services\SavingGoalService;
 use App\Services\TransactionService;
 use Carbon\Carbon;
@@ -16,7 +17,8 @@ class DashboardController extends Controller
         protected DashboardService $dashboardService,
         protected TransactionService $transactionService,
         protected BudgetService $budgetService,
-        protected SavingGoalService $savingGoalService
+        protected SavingGoalService $savingGoalService,
+        protected SalaryAllocationService $salaryAllocationService
     ) {}
 
     public function index(Request $request): View
@@ -33,6 +35,9 @@ class DashboardController extends Controller
         $monthlyTrends = $this->dashboardService->getMonthlyTrendChart($userId, 6);
         $expenseCategories = $this->dashboardService->getExpenseCategoryBreakdown($userId, $year, $month);
 
+        $allocationsData = $this->salaryAllocationService->getAllocationsForMonth($userId, $year, $month);
+        $balanceData = $this->salaryAllocationService->getMonthlyBalanceData($userId, $year, $month);
+
         return view('dashboard.index', compact(
             'metrics',
             'recentTransactions',
@@ -40,6 +45,8 @@ class DashboardController extends Controller
             'savingGoals',
             'monthlyTrends',
             'expenseCategories',
+            'allocationsData',
+            'balanceData',
             'month',
             'year'
         ));

@@ -6,7 +6,9 @@ use App\Enums\SavingGoalStatus;
 use App\Enums\TransactionType;
 use App\Models\Budget;
 use App\Models\Category;
+use App\Models\MonthlyBalance;
 use App\Models\PaymentMethod;
+use App\Models\SalaryAllocation;
 use App\Models\SavingGoal;
 use App\Models\Transaction;
 use App\Models\User;
@@ -20,85 +22,95 @@ class DemoDataSeeder extends Seeder
         $user = User::first();
         if (!$user) return;
 
-        $incomeGaji = Category::where('name', 'Gaji Pokok NOC')->first();
-        $incomeInsentif = Category::where('name', 'Insentif & On-Call Shift')->first();
-        $incomeSide = Category::where('name', 'Freelance & Side Project')->first();
+        $incomeGaji = Category::where('name', 'Gaji Bulanan')->first();
+        $incomeSide = Category::where('name', 'Freelance & Side Job')->first();
 
         $catMakan = Category::where('name', 'Makan & Minum Harian')->first();
         $catSembako = Category::where('name', 'Belanja Sembako / Pasar')->first();
-        $catListrik = Category::where('name', 'Listrik PLN (Token/Pascabayar)')->first();
-        $catInternet = Category::where('name', 'Internet Rumah (IndiHome/Biznet/Oxygen)')->first();
-        $catBensin = Category::where('name', 'Bensin & BBM')->first();
-        $catNOC = Category::where('name', 'Peralatan Jaringan (Crimping/LAN/SFP)')->first();
-        $catCafe = Category::where('name', 'Nongkrong & Cafe')->first();
+        $catKos = Category::where('name', 'Sewa Kos / Kontrakan')->first();
+        $catListrik = Category::where('name', 'Listrik PLN')->first();
+        $catInternet = Category::where('name', 'Internet & WiFi')->first();
+        $catBensin = Category::where('name', 'Bensin / BBM')->first();
+        $catCafe = Category::where('name', 'Nongkrong & Kafe')->first();
+        $catOrtu = Category::where('name', 'Kirim Orang Tua')->first();
 
         $payCash = PaymentMethod::where('name', 'Tunai (Cash Wallet)')->first();
         $payBCA = PaymentMethod::where('name', 'Bank BCA')->first();
-        $payGopay = PaymentMethod::where('name', 'GoPay')->first();
         $payQRIS = PaymentMethod::where('name', 'QRIS (Semua Pembayaran)')->first();
 
         // 1. Target Tabungan
         $goal1 = SavingGoal::create([
             'user_id' => $user->id,
-            'name' => 'Dana Darurat (6 Bulan Pengeluaran)',
+            'name' => 'Dana Darurat',
             'target_amount' => 15000000.00,
-            'current_amount' => 6500000.00,
+            'current_amount' => 6000000.00,
             'target_date' => Carbon::now()->addMonths(6)->toDateString(),
             'status' => SavingGoalStatus::ACTIVE,
-            'notes' => 'Disimpan di Reksadana Pasar Uang / Tabungan Khusus',
+            'notes' => 'Disimpan di tabungan terpisah',
             'color' => '#10b981',
         ]);
 
         $goal2 = SavingGoal::create([
             'user_id' => $user->id,
-            'name' => 'Sertifikasi MikroTik MTCNA & MTCRE',
-            'target_amount' => 4500000.00,
-            'current_amount' => 2000000.00,
-            'target_date' => Carbon::now()->addMonths(3)->toDateString(),
+            'name' => 'Tabungan Masa Depan',
+            'target_amount' => 10000000.00,
+            'current_amount' => 3500000.00,
+            'target_date' => Carbon::now()->addMonths(10)->toDateString(),
             'status' => SavingGoalStatus::ACTIVE,
-            'notes' => 'Training & exam voucher',
+            'notes' => 'Alokasi bulanan',
             'color' => '#3b82f6',
         ]);
 
-        $goal3 = SavingGoal::create([
-            'user_id' => $user->id,
-            'name' => 'Upgrade Laptop ThinkPad NOC',
-            'target_amount' => 12000000.00,
-            'current_amount' => 4000000.00,
-            'target_date' => Carbon::now()->addMonths(8)->toDateString(),
-            'status' => SavingGoalStatus::ACTIVE,
-            'notes' => 'Untuk troubleshooting di lapangan & simulasi GNS3/EVE-NG',
-            'color' => '#8b5cf6',
-        ]);
-
-        // 2. Budget Bulanan (Bulan Berjalan)
         $currentMonth = Carbon::now()->month;
         $currentYear = Carbon::now()->year;
 
+        // 2. Kesimpulan Kas & Saldo Awal Bulan
+        MonthlyBalance::create([
+            'user_id' => $user->id,
+            'month' => $currentMonth,
+            'year' => $currentYear,
+            'cash_initial' => 500000.00,
+            'bank_initial' => 2500000.00,
+            'total_salary' => 6000000.00,
+        ]);
+
+        // 3. Pembagian Gaji (Salary Allocations dengan status UNPAID / PAID)
+        $allocations = [
+            ['name' => 'Sewa Kosan', 'amount' => 1200000.00, 'category_id' => $catKos?->id, 'status' => 'paid', 'paid_date' => Carbon::now()->toDateString()],
+            ['name' => 'Uang Belanja & Makan', 'amount' => 1500000.00, 'category_id' => $catMakan?->id, 'status' => 'unpaid', 'paid_date' => null],
+            ['name' => 'Listrik PLN & WiFi', 'amount' => 500000.00, 'category_id' => $catListrik?->id, 'status' => 'paid', 'paid_date' => Carbon::now()->toDateString()],
+            ['name' => 'Bensin & Transport', 'amount' => 400000.00, 'category_id' => $catBensin?->id, 'status' => 'unpaid', 'paid_date' => null],
+            ['name' => 'Bantu Orang Tua', 'amount' => 1000000.00, 'category_id' => $catOrtu?->id, 'status' => 'paid', 'paid_date' => Carbon::now()->toDateString()],
+            ['name' => 'Alokasi Tabungan', 'amount' => 1000000.00, 'category_id' => null, 'status' => 'unpaid', 'paid_date' => null],
+            ['name' => 'Lifestyle / Hiburan', 'amount' => 400000.00, 'category_id' => $catCafe?->id, 'status' => 'unpaid', 'paid_date' => null],
+        ];
+
+        foreach ($allocations as $item) {
+            SalaryAllocation::create([
+                'user_id' => $user->id,
+                'month' => $currentMonth,
+                'year' => $currentYear,
+                'item_name' => $item['name'],
+                'amount' => $item['amount'],
+                'category_id' => $item['category_id'],
+                'status' => $item['status'],
+                'paid_date' => $item['paid_date'],
+            ]);
+        }
+
+        // 4. Budget Bulanan
         $parentPokok = Category::where('name', 'Kebutuhan Pokok & Makan')->first();
-        $parentTagihan = Category::where('name', 'Tagihan & Utilitas')->first();
-        $parentTransport = Category::where('name', 'Transportasi & Operasional')->first();
+        $parentTagihan = Category::where('name', 'Tagihan & Rumah Tangga')->first();
+        $parentTransport = Category::where('name', 'Transportasi')->first();
         $parentLifestyle = Category::where('name', 'Lifestyle & Hiburan')->first();
-        $parentNOC = Category::where('name', 'Pekerjaan & Tools NOC')->first();
 
-        if ($parentPokok) {
-            Budget::create(['user_id' => $user->id, 'category_id' => $parentPokok->id, 'month' => $currentMonth, 'year' => $currentYear, 'amount' => 1500000.00]);
-        }
-        if ($parentTagihan) {
-            Budget::create(['user_id' => $user->id, 'category_id' => $parentTagihan->id, 'month' => $currentMonth, 'year' => $currentYear, 'amount' => 750000.00]);
-        }
-        if ($parentTransport) {
-            Budget::create(['user_id' => $user->id, 'category_id' => $parentTransport->id, 'month' => $currentMonth, 'year' => $currentYear, 'amount' => 500000.00]);
-        }
-        if ($parentLifestyle) {
-            Budget::create(['user_id' => $user->id, 'category_id' => $parentLifestyle->id, 'month' => $currentMonth, 'year' => $currentYear, 'amount' => 400000.00]);
-        }
-        if ($parentNOC) {
-            Budget::create(['user_id' => $user->id, 'category_id' => $parentNOC->id, 'month' => $currentMonth, 'year' => $currentYear, 'amount' => 600000.00]);
-        }
+        if ($parentPokok) Budget::create(['user_id' => $user->id, 'category_id' => $parentPokok->id, 'month' => $currentMonth, 'year' => $currentYear, 'amount' => 1800000.00]);
+        if ($parentTagihan) Budget::create(['user_id' => $user->id, 'category_id' => $parentTagihan->id, 'month' => $currentMonth, 'year' => $currentYear, 'amount' => 1700000.00]);
+        if ($parentTransport) Budget::create(['user_id' => $user->id, 'category_id' => $parentTransport->id, 'month' => $currentMonth, 'year' => $currentYear, 'amount' => 500000.00]);
+        if ($parentLifestyle) Budget::create(['user_id' => $user->id, 'category_id' => $parentLifestyle->id, 'month' => $currentMonth, 'year' => $currentYear, 'amount' => 500000.00]);
 
-        // 3. Transaksi Data Realistis (Bulan ini dan 3 bulan ke belakang)
-        for ($m = 3; $m >= 0; $m--) {
+        // 5. Riwayat Transaksi 3 Bulan
+        for ($m = 2; $m >= 0; $m--) {
             $dateMonth = Carbon::now()->subMonths($m);
             $salaryDate = $dateMonth->copy()->startOfMonth()->addDays(24);
 
@@ -108,20 +120,9 @@ class DemoDataSeeder extends Seeder
                 'type' => TransactionType::INCOME,
                 'category_id' => $incomeGaji?->id,
                 'payment_method_id' => $payBCA?->id,
-                'amount' => 6500000.00,
+                'amount' => 6000000.00,
                 'transaction_date' => $salaryDate->toDateString(),
-                'description' => 'Gaji Pokok NOC Bulan ' . $salaryDate->translatedFormat('F Y'),
-            ]);
-
-            // Insentif Shift On-Call
-            Transaction::create([
-                'user_id' => $user->id,
-                'type' => TransactionType::INCOME,
-                'category_id' => $incomeInsentif?->id,
-                'payment_method_id' => $payBCA?->id,
-                'amount' => 750000.00,
-                'transaction_date' => $salaryDate->copy()->addDays(2)->toDateString(),
-                'description' => 'Insentif On-Call Shift Malam',
+                'description' => 'Gaji Bulan ' . $salaryDate->translatedFormat('F Y'),
             ]);
 
             // Alokasi ke Dana Darurat
@@ -135,55 +136,59 @@ class DemoDataSeeder extends Seeder
                 'description' => 'Setoran Rutin Dana Darurat',
             ]);
 
-            // Pengeluaran Pokok
+            // Pengeluaran Kosan
+            Transaction::create([
+                'user_id' => $user->id,
+                'type' => TransactionType::EXPENSE,
+                'category_id' => $catKos?->id,
+                'payment_method_id' => $payBCA?->id,
+                'amount' => 1200000.00,
+                'transaction_date' => $salaryDate->copy()->addDays(1)->toDateString(),
+                'description' => 'Bayar Sewa Kosan',
+            ]);
+
+            // Pengeluaran Listrik
             Transaction::create([
                 'user_id' => $user->id,
                 'type' => TransactionType::EXPENSE,
                 'category_id' => $catListrik?->id,
                 'payment_method_id' => $payBCA?->id,
-                'amount' => 250000.00,
-                'transaction_date' => $salaryDate->copy()->addDays(3)->toDateString(),
-                'description' => 'Beli Token Listrik PLN',
+                'amount' => 200000.00,
+                'transaction_date' => $salaryDate->copy()->addDays(2)->toDateString(),
+                'description' => 'Token Listrik PLN',
             ]);
 
-            Transaction::create([
-                'user_id' => $user->id,
-                'type' => TransactionType::EXPENSE,
-                'category_id' => $catInternet?->id,
-                'payment_method_id' => $payBCA?->id,
-                'amount' => 350000.00,
-                'transaction_date' => $salaryDate->copy()->addDays(4)->toDateString(),
-                'description' => 'Tagihan Internet Fiber',
-            ]);
-
+            // Pengeluaran Makan
             Transaction::create([
                 'user_id' => $user->id,
                 'type' => TransactionType::EXPENSE,
                 'category_id' => $catMakan?->id,
                 'payment_method_id' => $payQRIS?->id,
-                'amount' => 850000.00,
-                'transaction_date' => $salaryDate->copy()->addDays(5)->toDateString(),
+                'amount' => 650000.00,
+                'transaction_date' => $salaryDate->copy()->addDays(3)->toDateString(),
                 'description' => 'Makan & Minum Harian',
             ]);
 
+            // Pengeluaran Bensin
             Transaction::create([
                 'user_id' => $user->id,
                 'type' => TransactionType::EXPENSE,
                 'category_id' => $catBensin?->id,
                 'payment_method_id' => $payCash?->id,
-                'amount' => 200000.00,
-                'transaction_date' => $salaryDate->copy()->addDays(7)->toDateString(),
-                'description' => 'Bensin Pertamax Motor Operasional',
+                'amount' => 150000.00,
+                'transaction_date' => $salaryDate->copy()->addDays(4)->toDateString(),
+                'description' => 'Bensin Motor',
             ]);
 
+            // Kirim Orang Tua
             Transaction::create([
                 'user_id' => $user->id,
                 'type' => TransactionType::EXPENSE,
-                'category_id' => $catCafe?->id,
-                'payment_method_id' => $payQRIS?->id,
-                'amount' => 120000.00,
-                'transaction_date' => $salaryDate->copy()->addDays(8)->toDateString(),
-                'description' => 'Ngopi sambil monitoring jaringan NOC',
+                'category_id' => $catOrtu?->id,
+                'payment_method_id' => $payBCA?->id,
+                'amount' => 1000000.00,
+                'transaction_date' => $salaryDate->copy()->addDays(2)->toDateString(),
+                'description' => 'Kirim Orang Tua',
             ]);
         }
     }

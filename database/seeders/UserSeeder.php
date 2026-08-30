@@ -11,8 +11,8 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'name' => 'NOC Engineer',
-            'email' => 'admin@noc.id',
+            'name' => 'Admin Keuangan',
+            'email' => 'admin@finance.local',
             'password' => Hash::make('password'),
             'currency' => 'IDR',
             'phone' => '081234567890',

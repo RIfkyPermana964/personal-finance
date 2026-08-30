@@ -9,6 +9,7 @@ use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SalaryAllocationController;
 use App\Http\Controllers\SavingGoalController;
 use App\Http\Controllers\TransactionHistoryController;
 use Illuminate\Support\Facades\Route;
@@ -30,7 +31,14 @@ Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Keuangan: Pemasukan & Pengeluaran & Riwayat
+    // Pembagian Gaji & Kesimpulan Saldo
+    Route::get('/salary-allocations', [SalaryAllocationController::class, 'index'])->name('salary-allocations.index');
+    Route::post('/salary-allocations', [SalaryAllocationController::class, 'store'])->name('salary-allocations.store');
+    Route::patch('/salary-allocations/{salary_allocation}/toggle', [SalaryAllocationController::class, 'toggle'])->name('salary-allocations.toggle');
+    Route::post('/salary-allocations/balance', [SalaryAllocationController::class, 'updateBalance'])->name('salary-allocations.balance');
+    Route::delete('/salary-allocations/{salary_allocation}', [SalaryAllocationController::class, 'destroy'])->name('salary-allocations.destroy');
+
+    // Keuangan: Pemasukan, Pengeluaran, & Riwayat
     Route::resource('income', IncomeController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('expenses', ExpenseController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::get('/transactions', [TransactionHistoryController::class, 'index'])->name('transactions.index');

@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Dashboard' }} — Personal Financial System</title>
+    <title>{{ $title ?? 'Dashboard' }} — Personal Finance</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="h-full bg-[#090D16] text-slate-200 antialiased font-sans flex" x-data="{ sidebarOpen: false, quickTxModal: false, deleteModal: false, deleteAction: '', deleteMessage: '' }">
+<body class="h-full bg-[#090D16] text-slate-200 antialiased font-sans flex" x-data="{ sidebarOpen: false, deleteModal: false, deleteAction: '', deleteMessage: '' }">
 
     <!-- Mobile Sidebar Backdrop -->
     <div x-show="sidebarOpen" x-cloak 
@@ -26,10 +26,9 @@
             </div>
             <div>
                 <h1 class="text-base font-bold text-white tracking-wide flex items-center gap-1.5">
-                    Finance NOC
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">PRO</span>
+                    Personal Finance
                 </h1>
-                <p class="text-xs text-slate-400">Personal Financial System</p>
+                <p class="text-xs text-slate-300">Financial Management System</p>
             </div>
         </div>
 
@@ -50,9 +49,37 @@
                 </div>
             </div>
 
-            <!-- Group: Keuangan -->
+            <!-- Group: Perencanaan Gaji & Anggaran -->
             <div>
-                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-300">Keuangan</p>
+                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-300">Perencanaan Gaji</p>
+                <div class="mt-2 space-y-1">
+                    <a href="{{ route('salary-allocations.index') }}" 
+                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('salary-allocations.*') ? 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50' }}">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                        Pembagian Gaji & Saldo
+                    </a>
+                    <a href="{{ route('budgets.index') }}" 
+                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('budgets.*') ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30 shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50' }}">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Pagu Anggaran (Budget)
+                    </a>
+                    <a href="{{ route('saving-goals.index') }}" 
+                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('saving-goals.*') ? 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50' }}">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        Target Tabungan
+                    </a>
+                </div>
+            </div>
+
+            <!-- Group: Keuangan Harian -->
+            <div>
+                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-300">Transaksi Harian</p>
                 <div class="mt-2 space-y-1">
                     <a href="{{ route('income.index') }}" 
                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('income.*') ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50' }}">
@@ -78,30 +105,9 @@
                 </div>
             </div>
 
-            <!-- Group: Perencanaan -->
-            <div>
-                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-300">Perencanaan</p>
-                <div class="mt-2 space-y-1">
-                    <a href="{{ route('budgets.index') }}" 
-                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('budgets.*') ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30 shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50' }}">
-                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        Budget Bulanan
-                    </a>
-                    <a href="{{ route('saving-goals.index') }}" 
-                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('saving-goals.*') ? 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50' }}">
-                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                        </svg>
-                        Target Tabungan
-                    </a>
-                </div>
-            </div>
-
             <!-- Group: Analisis -->
             <div>
-                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-300">Analisis</p>
+                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-300">Laporan</p>
                 <div class="mt-2 space-y-1">
                     <a href="{{ route('reports.index') }}" 
                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('reports.*') ? 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50' }}">
@@ -169,23 +175,19 @@
                 </button>
                 <div>
                     <h2 class="text-lg font-bold text-white tracking-tight">{{ $header ?? 'Dashboard' }}</h2>
-                    <p class="text-xs text-slate-400 hidden sm:block">{{ $subheader ?? 'Monitoring & pencatatan keuangan pribadi' }}</p>
+                    <p class="text-xs text-slate-300 hidden sm:block">{{ $subheader ?? 'Pencatatan dan pengelolaan keuangan pribadi' }}</p>
                 </div>
             </div>
 
             <!-- Header Actions -->
             <div class="flex items-center gap-3">
-                <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-xs text-slate-300">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>System Status: <strong class="text-emerald-400">Optimal</strong></span>
-                </div>
-
                 <form method="POST" action="{{ route('logout') }}" class="inline">
                     @csrf
-                    <button type="submit" title="Keluar" class="p-2.5 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button type="submit" title="Keluar" class="p-2.5 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition flex items-center gap-1.5 text-xs font-semibold">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                         </svg>
+                        <span class="hidden sm:inline">Keluar</span>
                     </button>
                 </form>
             </div>
@@ -251,7 +253,7 @@
             </div>
             <div class="text-center space-y-1">
                 <h3 class="text-base font-bold text-white">Konfirmasi Hapus</h3>
-                <p class="text-xs text-slate-400" x-text="deleteMessage || 'Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.'"></p>
+                <p class="text-xs text-slate-300" x-text="deleteMessage || 'Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.'"></p>
             </div>
             <form :action="deleteAction" method="POST" class="flex gap-3 pt-2">
                 @csrf
