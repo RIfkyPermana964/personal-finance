@@ -19,13 +19,24 @@ body {
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Dark Mode Body */
+/* ========================================================
+   HARMONIOUS MODERN DARK MODE SYSTEM (Deep Slate Obsidian)
+   Unified color ladder:
+   Canvas (Base):  #0A0F1D (html, body, main canvas)
+   Chrome:         #0D1424 (Sidebar, Navbar)
+   Surfaces:       #121A2D (Cards, Modals, Panels)
+   Recessed Wells: #0B1020 (Inputs, Table Heads, Nested Boxes)
+   Borders:        #1A2438 & #1E293B
+   Hover States:   #162138
+   Text Ladder:    #F8FAFC (Headings), #CBD5E1 (Body), #8291A5 (Muted)
+======================================================== */
+
 .dark body {
-    background-color: #0B0F19;
+    background-color: #0A0F1D;
     color: #F8FAFC;
 }
 
-/* Custom Clean Scrollbars */
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -42,16 +53,16 @@ body {
 }
 
 .dark ::-webkit-scrollbar-track {
-    background: #0B0F19;
+    background: #0A0F1D;
 }
 .dark ::-webkit-scrollbar-thumb {
     background: #1E293B;
 }
 .dark ::-webkit-scrollbar-thumb:hover {
-    background: #334155;
+    background: #2E3E5B;
 }
 
-/* Modern Card Utilities */
+/* Base Surfaces & Elevated Cards */
 .app-card {
     background-color: #FFFFFF;
     border: 1px solid #E2E8F0;
@@ -59,10 +70,10 @@ body {
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
 }
 
-.dark .app-card {
-    background-color: #151E2E;
-    border-color: #1E293B;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+.dark .app-card,
+.dark .bg-white {
+    background-color: #121A2D !important;
+    border-color: #1E293B !important;
 }
 
 .app-card-hover {
@@ -75,16 +86,58 @@ body {
 }
 
 .dark .app-card-hover:hover {
-    border-color: #334155;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    border-color: #283852 !important;
+    background-color: #152036 !important;
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.4) !important;
 }
 
-/* Base Dark Mode Support for Standard Elements */
+/* Recessed Inset Boxes, Inner Panels, and Neutral Wells */
+.dark .bg-slate-50,
+.dark .bg-slate-100,
+.dark .bg-slate-50\/50,
+.dark .bg-slate-50\/70,
+.dark .bg-slate-50\/80,
+.dark .bg-slate-100\/80 {
+    background-color: #0B1020 !important;
+    border-color: #1A2438 !important;
+}
+
+/* Unified Subtle Borders across all containers */
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-slate-200\/80,
+.dark .border-slate-200\/90,
+.dark .border-slate-300,
+.dark .border-slate-800 {
+    border-color: #1A2438 !important;
+}
+
+/* Unified Clean Text Hierarchy */
+.dark .text-slate-900 {
+    color: #F8FAFC !important;
+}
+.dark .text-slate-800 {
+    color: #F1F5F9 !important;
+}
+.dark .text-slate-700 {
+    color: #CBD5E1 !important;
+}
+.dark .text-slate-600 {
+    color: #94A3B8 !important;
+}
+.dark .text-slate-500 {
+    color: #8291A5 !important;
+}
+.dark .text-slate-400 {
+    color: #64748B !important;
+}
+
+/* Form Controls (Inputs, Selects, Textareas) */
 .dark input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="file"]),
 .dark select,
 .dark textarea {
-    background-color: #151E2E !important;
-    border-color: #1E293B !important;
+    background-color: #0B1020 !important;
+    border-color: #1A2438 !important;
     color: #F8FAFC !important;
 }
 
@@ -92,68 +145,184 @@ body {
 .dark select:focus,
 .dark textarea:focus {
     border-color: #6366F1 !important;
-    background-color: #182234 !important;
+    background-color: #0E162A !important;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2) !important;
 }
 
 .dark input::placeholder,
 .dark textarea::placeholder {
-    color: #64748B !important;
+    color: #475569 !important;
 }
 
 .dark select option {
-    background-color: #151E2E;
+    background-color: #0B1020;
     color: #F8FAFC;
 }
 
-/* Dark Mode Base Overrides for existing utility classes */
-.dark .bg-white {
-    background-color: #151E2E !important;
+/* Tables & Table Insets */
+.dark table {
+    color: #CBD5E1;
+}
+.dark table thead,
+.dark table thead tr,
+.dark table thead th {
+    background-color: #0B1020 !important;
+    color: #8291A5 !important;
+    border-color: #1A2438 !important;
+}
+.dark table tbody tr {
+    border-color: #1A2438 !important;
+}
+.dark table tbody tr:hover td {
+    background-color: rgba(22, 33, 56, 0.6) !important;
+}
+.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #1A2438 !important;
 }
 
-.dark .bg-slate-50 {
-    background-color: #0B0F19 !important;
+/* ========================================================
+   TRANSLUCENT GLOWING STATUS TINTS (DARK MODE)
+   Smooth Glassmorphism badges and highlight containers!
+======================================================== */
+
+/* Emerald / Green (Cash Akhir, PAID, Uang Masuk, Tabungan) */
+.dark .bg-emerald-50,
+.dark .bg-emerald-50\/30,
+.dark .bg-emerald-50\/50,
+.dark .bg-emerald-50\/70,
+.dark .bg-emerald-100,
+.dark .bg-emerald-950\/20,
+.dark .bg-emerald-950\/40,
+.dark .bg-emerald-950\/60 {
+    background-color: rgba(16, 185, 129, 0.09) !important;
+    border-color: rgba(16, 185, 129, 0.22) !important;
+}
+.dark .text-emerald-700,
+.dark .text-emerald-800 {
+    color: #34D399 !important;
+}
+.dark .border-emerald-100,
+.dark .border-emerald-200,
+.dark .border-emerald-300,
+.dark .border-emerald-800,
+.dark .border-emerald-900\/50 {
+    border-color: rgba(16, 185, 129, 0.22) !important;
+}
+.dark .hover\:bg-emerald-200:hover {
+    background-color: rgba(16, 185, 129, 0.18) !important;
 }
 
-.dark .bg-slate-100 {
-    background-color: #1E293B !important;
+/* Sky / Blue (Saldo Akhir, Rekening, Tabungan) */
+.dark .bg-sky-50,
+.dark .bg-sky-50\/30,
+.dark .bg-sky-50\/50,
+.dark .bg-sky-50\/70,
+.dark .bg-sky-100,
+.dark .bg-sky-950\/20,
+.dark .bg-sky-950\/40,
+.dark .bg-sky-950\/60 {
+    background-color: rgba(14, 165, 233, 0.09) !important;
+    border-color: rgba(14, 165, 233, 0.22) !important;
+}
+.dark .text-sky-700,
+.dark .text-sky-800 {
+    color: #38BDF8 !important;
+}
+.dark .border-sky-100,
+.dark .border-sky-200,
+.dark .border-sky-300,
+.dark .border-sky-800,
+.dark .border-sky-900\/50 {
+    border-color: rgba(14, 165, 233, 0.22) !important;
 }
 
-.dark .border-slate-100,
-.dark .border-slate-200,
-.dark .border-slate-200\/80,
-.dark .border-slate-200\/90 {
-    border-color: #1E293B !important;
+/* Rose / Red (Hutang, UNPAID, Uang Keluar) */
+.dark .bg-rose-50,
+.dark .bg-rose-50\/30,
+.dark .bg-rose-50\/50,
+.dark .bg-rose-50\/60,
+.dark .bg-rose-50\/70,
+.dark .bg-rose-100,
+.dark .bg-rose-950\/20,
+.dark .bg-rose-950\/40,
+.dark .bg-rose-950\/60 {
+    background-color: rgba(244, 63, 94, 0.09) !important;
+    border-color: rgba(244, 63, 94, 0.22) !important;
+}
+.dark .text-rose-700,
+.dark .text-rose-800 {
+    color: #FB7185 !important;
+}
+.dark .border-rose-100,
+.dark .border-rose-200,
+.dark .border-rose-300,
+.dark .border-rose-800,
+.dark .border-rose-900\/50 {
+    border-color: rgba(244, 63, 94, 0.22) !important;
+}
+.dark .hover\:bg-rose-200:hover {
+    background-color: rgba(244, 63, 94, 0.18) !important;
 }
 
-.dark .text-slate-900 {
-    color: #F8FAFC !important;
+/* Indigo / Purple (Navigasi Aktif, Perencanaan, Total Saldo) */
+.dark .bg-indigo-50,
+.dark .bg-indigo-50\/30,
+.dark .bg-indigo-50\/50,
+.dark .bg-indigo-50\/70,
+.dark .bg-indigo-50\/80,
+.dark .bg-indigo-100,
+.dark .bg-indigo-950\/20,
+.dark .bg-indigo-950\/40,
+.dark .bg-indigo-950\/60 {
+    background-color: rgba(99, 102, 241, 0.09) !important;
+    border-color: rgba(99, 102, 241, 0.22) !important;
+}
+.dark .text-indigo-700,
+.dark .text-indigo-800,
+.dark .text-indigo-950 {
+    color: #A5B4FC !important;
+}
+.dark .border-indigo-100,
+.dark .border-indigo-200,
+.dark .border-indigo-300,
+.dark .border-indigo-800,
+.dark .border-indigo-900\/50 {
+    border-color: rgba(99, 102, 241, 0.22) !important;
 }
 
-.dark .text-slate-800 {
-    color: #F1F5F9 !important;
+/* Amber / Yellow (Pagu Anggaran, Target) */
+.dark .bg-amber-50,
+.dark .bg-amber-50\/50,
+.dark .bg-amber-50\/70,
+.dark .bg-amber-100,
+.dark .bg-amber-950\/20,
+.dark .bg-amber-950\/40,
+.dark .bg-amber-950\/60 {
+    background-color: rgba(245, 158, 11, 0.09) !important;
+    border-color: rgba(245, 158, 11, 0.22) !important;
+}
+.dark .text-amber-700,
+.dark .text-amber-800 {
+    color: #FBBF24 !important;
+}
+.dark .border-amber-100,
+.dark .border-amber-200,
+.dark .border-amber-300,
+.dark .border-amber-800,
+.dark .border-amber-900\/50 {
+    border-color: rgba(245, 158, 11, 0.22) !important;
 }
 
-.dark .text-slate-700 {
-    color: #E2E8F0 !important;
-}
-
-.dark .text-slate-600 {
-    color: #CBD5E1 !important;
-}
-
-.dark .text-slate-500 {
-    color: #94A3B8 !important;
-}
-
+/* Hover States across buttons & list rows */
 .dark .hover\:bg-slate-50:hover,
-.dark .hover\:bg-slate-100:hover {
-    background-color: #1E293B !important;
+.dark .hover\:bg-slate-100:hover,
+.dark .hover\:bg-slate-200\/60:hover {
+    background-color: #162138 !important;
 }
-
 .dark .hover\:bg-slate-200:hover {
-    background-color: #334155 !important;
+    background-color: #1D2A44 !important;
 }
-
 .dark .hover\:text-slate-900:hover,
 .dark .hover\:text-slate-800:hover {
     color: #FFFFFF !important;

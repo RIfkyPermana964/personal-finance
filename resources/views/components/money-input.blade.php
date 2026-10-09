@@ -35,7 +35,7 @@
                {{ $required ? 'required' : '' }}
                x-money
                @if($model) x-model="{{ $model }}" @endif
-               {{ $attributes->merge(['class' => 'w-full pl-11 pr-4 py-2.5 bg-white dark:bg-[#151E2E] border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white font-mono text-base font-semibold focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition']) }}>
+               {{ $attributes->merge(['class' => 'w-full pl-11 pr-4 py-2.5 bg-white dark:bg-[#0B1020] border border-slate-200 dark:border-[#1A2438] rounded-xl text-slate-900 dark:text-white font-mono text-base font-semibold focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition']) }}>
     </div>
     <p class="mt-1 text-[11px] text-slate-400 dark:text-slate-500">Titik otomatis ditambahkan per kelipatan ribuan</p>
 </div>

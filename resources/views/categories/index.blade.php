@@ -30,35 +30,35 @@ class="space-y-6">
     <!-- Action Bar -->
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
         <!-- Tab Switch -->
-        <div class="flex items-center gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+        <div class="flex items-center gap-1 p-1 bg-slate-100 dark:bg-[#0B1020] rounded-xl border border-slate-200 dark:border-[#1A2438]">
             <button @click="tab = 'expense'"
-                    :class="tab === 'expense' ? 'bg-white dark:bg-[#151E2E] text-rose-700 dark:text-rose-400 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'"
+                    :class="tab === 'expense' ? 'bg-white dark:bg-[#121A2D] text-rose-700 dark:text-rose-400 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'"
                     class="px-4 py-2 rounded-lg text-xs transition cursor-pointer">
                 🏷️ Kategori Pengeluaran
             </button>
             <button @click="tab = 'income'"
-                    :class="tab === 'income' ? 'bg-white dark:bg-[#151E2E] text-emerald-700 dark:text-emerald-400 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'"
+                    :class="tab === 'income' ? 'bg-white dark:bg-[#121A2D] text-emerald-700 dark:text-emerald-400 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'"
                     class="px-4 py-2 rounded-lg text-xs transition cursor-pointer">
                 💰 Kategori Pemasukan
             </button>
         </div>
 
         <button @click="createModal = true"
-                class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition cursor-pointer flex items-center gap-2">
+                class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition cursor-pointer flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             Tambah Kategori Baru
         </button>
     </div>
 
     <!-- Drag & Drop Instruction Banner -->
-    <div class="flex items-start sm:items-center gap-3 p-4 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/60 text-indigo-950 dark:text-indigo-200 text-xs shadow-2xs">
+    <div class="flex items-start sm:items-center gap-3 p-4 rounded-2xl bg-indigo-50/80 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/25 text-indigo-950 dark:text-indigo-200 text-xs shadow-2xs">
         <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 font-bold shadow-xs">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01"/>
             </svg>
         </div>
         <div class="flex-1 leading-relaxed">
-            <span class="font-bold">Sesuaikan Urutan (Drag & Drop):</span> Tekan dan geser ikon gagang <span class="font-mono bg-white dark:bg-[#151E2E] px-1.5 py-0.5 rounded border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 font-bold">⋮⋮</span> pada kategori utama atau subkategori (misal: geser <em>Makanan / Kebutuhan Pokok</em> ke urutan paling atas). Urutan baru otomatis tersimpan dan menjadi prioritas teratas saat mencatat transaksi.
+            <span class="font-bold">Sesuaikan Urutan (Drag & Drop):</span> Tekan dan geser ikon gagang <span class="font-mono bg-white dark:bg-[#121A2D] px-1.5 py-0.5 rounded border border-indigo-200 dark:border-indigo-500/30 text-indigo-700 dark:text-indigo-400 font-bold">⋮⋮</span> pada kategori utama atau subkategori (misal: geser <em>Makanan / Kebutuhan Pokok</em> ke urutan paling atas). Urutan baru otomatis tersimpan dan menjadi prioritas teratas saat mencatat transaksi.
         </div>
     </div>
 
@@ -298,7 +298,7 @@ class="space-y-6">
         border-color: #818cf8 !important;
     }
     .dark .sortable-chosen {
-        background-color: #151e2e !important;
+        background-color: #121a2d !important;
         box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
         outline: 2px solid #818cf8 !important;
     }
@@ -307,7 +307,7 @@ class="space-y-6">
         border-color: #34d399 !important;
     }
     .dark .income-sortable-chosen {
-        background-color: #151e2e !important;
+        background-color: #121a2d !important;
         box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
         outline: 2px solid #34d399 !important;
     }

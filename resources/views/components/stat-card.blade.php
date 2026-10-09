@@ -7,11 +7,11 @@ $colorStyles = match($color) {
     'indigo' => ['border' => 'border-indigo-100 dark:border-indigo-900/50', 'bg' => 'bg-indigo-50/50 dark:bg-indigo-950/20', 'iconBg' => 'bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400', 'valueColor' => 'text-indigo-700 dark:text-indigo-400'],
     'amber' => ['border' => 'border-amber-100 dark:border-amber-900/50', 'bg' => 'bg-amber-50/50 dark:bg-amber-950/20', 'iconBg' => 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400', 'valueColor' => 'text-amber-700 dark:text-amber-400'],
     'cyan' => ['border' => 'border-sky-100 dark:border-sky-900/50', 'bg' => 'bg-sky-50/50 dark:bg-sky-950/20', 'iconBg' => 'bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-400', 'valueColor' => 'text-sky-700 dark:text-sky-400'],
-    default => ['border' => 'border-slate-200/80 dark:border-slate-800', 'bg' => 'bg-white dark:bg-[#151E2E]', 'iconBg' => 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300', 'valueColor' => 'text-slate-900 dark:text-white'],
+    default => ['border' => 'border-slate-200/80 dark:border-[#1E293B]', 'bg' => 'bg-white dark:bg-[#121A2D]', 'iconBg' => 'bg-slate-100 dark:bg-[#162138] text-slate-700 dark:text-slate-300', 'valueColor' => 'text-slate-900 dark:text-white'],
 };
 @endphp
 
-<div class="relative overflow-hidden bg-white dark:bg-[#151E2E] border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+<div class="relative overflow-hidden bg-white dark:bg-[#121A2D] border border-slate-200/80 dark:border-[#1E293B] rounded-2xl p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
     <div class="flex items-start justify-between gap-3">
         <div class="space-y-1 min-w-0">
             <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 truncate">{{ $title }}</p>

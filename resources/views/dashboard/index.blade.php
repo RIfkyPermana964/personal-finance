@@ -97,36 +97,36 @@
                 </div>
 
                 <div class="space-y-3 mt-4">
-                    <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
-                        <span class="text-xs font-semibold text-slate-600 uppercase">CASH AWAL</span>
-                        <span class="text-sm font-mono font-bold text-slate-900">Rp {{ number_format($balanceData['cash_initial'], 0, ',', '.') }}</span>
+                    <div class="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-[#0B1020] border border-slate-100 dark:border-[#1A2438]">
+                        <span class="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">CASH AWAL</span>
+                        <span class="text-sm font-mono font-bold text-slate-900 dark:text-white">Rp {{ number_format($balanceData['cash_initial'], 0, ',', '.') }}</span>
                     </div>
 
-                    <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
-                        <span class="text-xs font-semibold text-slate-600 uppercase">SALDO AWAL</span>
-                        <span class="text-sm font-mono font-bold text-slate-900">Rp {{ number_format($balanceData['bank_initial'], 0, ',', '.') }}</span>
+                    <div class="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-[#0B1020] border border-slate-100 dark:border-[#1A2438]">
+                        <span class="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">SALDO AWAL</span>
+                        <span class="text-sm font-mono font-bold text-slate-900 dark:text-white">Rp {{ number_format($balanceData['bank_initial'], 0, ',', '.') }}</span>
                     </div>
 
-                    <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 border border-emerald-100">
+                    <div class="flex items-center justify-between p-3.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/25">
                         <div>
-                            <span class="text-xs font-bold text-emerald-800 uppercase">CASH AKHIR</span>
-                            <span class="text-[10px] text-slate-500 block">(Estimasi tunai)</span>
+                            <span class="text-xs font-bold text-emerald-800 dark:text-emerald-400 uppercase">CASH AKHIR</span>
+                            <span class="text-[10px] text-slate-500 dark:text-slate-400 block">(Estimasi tunai)</span>
                         </div>
-                        <span class="text-base font-mono font-black text-emerald-700">Rp {{ number_format($balanceData['cash_final'], 0, ',', '.') }}</span>
+                        <span class="text-base font-mono font-black text-emerald-700 dark:text-emerald-400">Rp {{ number_format($balanceData['cash_final'], 0, ',', '.') }}</span>
                     </div>
 
-                    <div class="flex items-center justify-between p-3 rounded-xl bg-sky-50/70 border border-sky-100">
+                    <div class="flex items-center justify-between p-3.5 rounded-xl bg-sky-50/70 dark:bg-sky-500/10 border border-sky-100 dark:border-sky-500/25">
                         <div>
-                            <span class="text-xs font-bold text-sky-800 uppercase">SALDO AKHIR</span>
-                            <span class="text-[10px] text-slate-500 block">(Estimasi rekening)</span>
+                            <span class="text-xs font-bold text-sky-800 dark:text-sky-400 uppercase">SALDO AKHIR</span>
+                            <span class="text-[10px] text-slate-500 dark:text-slate-400 block">(Estimasi rekening)</span>
                         </div>
-                        <span class="text-base font-mono font-black text-sky-700">Rp {{ number_format($balanceData['bank_final'], 0, ',', '.') }}</span>
+                        <span class="text-base font-mono font-black text-sky-700 dark:text-sky-400">Rp {{ number_format($balanceData['bank_final'], 0, ',', '.') }}</span>
                     </div>
                 </div>
             </div>
 
-            <div class="pt-3 border-t border-slate-100">
-                <a href="{{ route('salary-allocations.index', ['month' => $month, 'year' => $year]) }}" class="w-full block py-2.5 px-3 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold transition text-center">
+            <div class="pt-3 border-t border-slate-100 dark:border-[#1A2438]">
+                <a href="{{ route('salary-allocations.index', ['month' => $month, 'year' => $year]) }}" class="w-full block py-2.5 px-3 bg-slate-50 dark:bg-[#0B1020] hover:bg-slate-100 dark:hover:bg-[#162138] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-[#1A2438] rounded-xl text-xs font-semibold transition text-center">
                     Buka Rincian Saldo & Alokasi
                 </a>
             </div>
@@ -478,7 +478,7 @@
                             data: {!! json_encode($expenseCategories['data']) !!},
                             backgroundColor: {!! json_encode($expenseCategories['colors']) !!},
                             borderWidth: 2,
-                            borderColor: isDark ? '#151E2E' : '#FFFFFF',
+                            borderColor: isDark ? '#121A2D' : '#FFFFFF',
                             hoverOffset: 4
                         }]
                     },
@@ -520,7 +520,7 @@
                     trendChart.update();
                 }
                 if (categoryChart) {
-                    categoryChart.data.datasets[0].borderColor = dark ? '#151E2E' : '#FFFFFF';
+                    categoryChart.data.datasets[0].borderColor = dark ? '#121A2D' : '#FFFFFF';
                     categoryChart.update();
                 }
             });
