@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Dashboard' }} — Personal Finance</title>
     
-    <!-- Instant Dark Mode FOUC Prevention Script -->
+    <!-- Instant Dark Mode & Sidebar FOUC Prevention Script -->
     <script>
         (function() {
             const savedTheme = localStorage.getItem('theme');
@@ -16,6 +16,10 @@
             } else {
                 document.documentElement.classList.remove('dark');
             }
+
+            if (localStorage.getItem('sidebar_collapsed') === 'true') {
+                document.documentElement.classList.add('sidebar-collapsed');
+            }
         })();
     </script>
 
@@ -24,6 +28,7 @@
 <body class="h-full bg-slate-50 dark:bg-[#0A0F1D] text-slate-800 dark:text-slate-100 antialiased font-sans flex transition-colors duration-200" 
       x-data="{ 
           sidebarOpen: false, 
+          sidebarCollapsed: localStorage.getItem('sidebar_collapsed') === 'true',
           deleteModal: false, 
           deleteAction: '', 
           deleteMessage: '',
@@ -38,6 +43,15 @@
                   localStorage.setItem('theme', 'light');
               }
               window.dispatchEvent(new CustomEvent('theme-changed', { detail: { dark: this.darkMode } }));
+          },
+          toggleSidebarCollapse() {
+              this.sidebarCollapsed = !this.sidebarCollapsed;
+              localStorage.setItem('sidebar_collapsed', this.sidebarCollapsed);
+              if (this.sidebarCollapsed) {
+                  document.documentElement.classList.add('sidebar-collapsed');
+              } else {
+                  document.documentElement.classList.remove('sidebar-collapsed');
+              }
           }
       }" 
       @open-delete.window="deleteAction = $event.detail.action; deleteMessage = $event.detail.message; deleteModal = true">
@@ -49,83 +63,117 @@
     </div>
 
     <!-- Sidebar Navigation -->
-    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" 
-           class="fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-[#0D1424] border-r border-slate-200/80 dark:border-[#1A2438] flex flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 shadow-xs">
+    <aside :class="[
+               sidebarOpen ? 'translate-x-0' : '-translate-x-full',
+               sidebarCollapsed ? 'lg:w-20' : 'lg:w-72'
+           ]" 
+           class="app-sidebar fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-[#0D1424] border-r border-slate-200/80 dark:border-[#1A2438] flex flex-col transition-all duration-300 ease-in-out lg:static lg:translate-x-0 shadow-xs flex-shrink-0">
         
-        <!-- Brand Logo -->
-        <div class="h-20 flex items-center px-6 border-b border-slate-100 dark:border-[#1A2438] gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-indigo-600 flex items-center justify-center shadow-md shadow-emerald-600/20 text-white font-black text-lg">
-                PF
+        <!-- Brand Logo & Minimize Toggle -->
+        <div class="h-20 flex items-center border-b border-slate-100 dark:border-[#1A2438] transition-all duration-300"
+             :class="sidebarCollapsed ? 'justify-center px-2' : 'justify-between px-6'">
+            <div class="flex items-center gap-3 overflow-hidden cursor-pointer"
+                 @click="if (sidebarCollapsed) toggleSidebarCollapse()"
+                 :title="sidebarCollapsed ? 'Klik untuk memperluas sidebar' : ''">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-indigo-600 flex items-center justify-center shadow-md shadow-emerald-600/20 text-white font-black text-lg flex-shrink-0 transition-transform hover:scale-105">
+                    PF
+                </div>
+                <div x-show="!sidebarCollapsed" x-cloak class="min-w-0 transition-opacity duration-200">
+                    <h1 class="text-base font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5 truncate">
+                        Personal Finance
+                    </h1>
+                    <p class="text-xs text-slate-400 dark:text-slate-500 font-medium truncate">Financial Management</p>
+                </div>
             </div>
-            <div>
-                <h1 class="text-base font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5">
-                    Personal Finance
-                </h1>
-                <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">Financial Management</p>
-            </div>
+
+            <!-- Minimize Button on Desktop inside Sidebar Header -->
+            <button @click="toggleSidebarCollapse()" 
+                    type="button"
+                    x-show="!sidebarCollapsed" 
+                    x-cloak
+                    class="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#162138] transition cursor-pointer flex-shrink-0"
+                    title="Kecilkan Sidebar">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+                </svg>
+            </button>
         </div>
 
         <!-- Navigation Links -->
-        <div class="flex-1 overflow-y-auto px-4 py-5 space-y-6">
+        <div class="flex-1 overflow-y-auto py-5 transition-all duration-300"
+             :class="sidebarCollapsed ? 'px-2 space-y-4' : 'px-4 space-y-6'">
             
             <!-- Group: Utama -->
             <div>
-                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Ringkasan</p>
+                <p x-show="!sidebarCollapsed" x-cloak class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 transition-opacity">Ringkasan</p>
+                <div x-show="sidebarCollapsed" x-cloak class="my-2 border-t border-slate-100 dark:border-[#1A2438]"></div>
                 <div class="mt-2 space-y-1">
                     <a href="{{ route('dashboard') }}" 
-                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('dashboard') ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 dark:border dark:border-emerald-500/20 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}">
+                       :title="sidebarCollapsed ? 'Dashboard' : ''"
+                       class="flex items-center rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('dashboard') ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 dark:border dark:border-emerald-500/20 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}"
+                       :class="sidebarCollapsed ? 'justify-center p-2.5' : 'gap-3 px-3 py-2.5'">
                         <svg class="w-5 h-5 flex-shrink-0 {{ request()->routeIs('dashboard') ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                         </svg>
-                        Dashboard
+                        <span x-show="!sidebarCollapsed" x-cloak class="truncate">Dashboard</span>
                     </a>
                 </div>
             </div>
 
             <!-- Group: Perencanaan Gaji & Anggaran -->
             <div>
-                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Perencanaan Gaji</p>
+                <p x-show="!sidebarCollapsed" x-cloak class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 transition-opacity">Perencanaan Gaji</p>
+                <div x-show="sidebarCollapsed" x-cloak class="my-2 border-t border-slate-100 dark:border-[#1A2438]"></div>
                 <div class="mt-2 space-y-1">
                     <a href="{{ route('salary-allocations.index') }}" 
-                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('salary-allocations.*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 dark:border dark:border-indigo-500/20 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}">
+                       :title="sidebarCollapsed ? 'Pembagian Gaji & Saldo' : ''"
+                       class="flex items-center rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('salary-allocations.*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 dark:border dark:border-indigo-500/20 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}"
+                       :class="sidebarCollapsed ? 'justify-center p-2.5' : 'gap-3 px-3 py-2.5'">
                         <svg class="w-5 h-5 flex-shrink-0 {{ request()->routeIs('salary-allocations.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                         </svg>
-                        Pembagian Gaji & Saldo
+                        <span x-show="!sidebarCollapsed" x-cloak class="truncate">Pembagian Gaji & Saldo</span>
                     </a>
                     <a href="{{ route('budgets.index') }}" 
-                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('budgets.*') ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 dark:border dark:border-amber-500/20 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}">
+                       :title="sidebarCollapsed ? 'Pagu Anggaran (Budget)' : ''"
+                       class="flex items-center rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('budgets.*') ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 dark:border dark:border-amber-500/20 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}"
+                       :class="sidebarCollapsed ? 'justify-center p-2.5' : 'gap-3 px-3 py-2.5'">
                         <svg class="w-5 h-5 flex-shrink-0 {{ request()->routeIs('budgets.*') ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        Pagu Anggaran (Budget)
+                        <span x-show="!sidebarCollapsed" x-cloak class="truncate">Pagu Anggaran (Budget)</span>
                     </a>
                     <a href="{{ route('saving-goals.index') }}" 
-                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('saving-goals.*') ? 'bg-sky-50 dark:bg-sky-500/10 text-sky-700 dark:text-sky-400 dark:border dark:border-sky-500/20 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}">
+                       :title="sidebarCollapsed ? 'Target Tabungan' : ''"
+                       class="flex items-center rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('saving-goals.*') ? 'bg-sky-50 dark:bg-sky-500/10 text-sky-700 dark:text-sky-400 dark:border dark:border-sky-500/20 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}"
+                       :class="sidebarCollapsed ? 'justify-center p-2.5' : 'gap-3 px-3 py-2.5'">
                         <svg class="w-5 h-5 flex-shrink-0 {{ request()->routeIs('saving-goals.*') ? 'text-sky-600 dark:text-sky-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
-                        Target Tabungan
+                        <span x-show="!sidebarCollapsed" x-cloak class="truncate">Target Tabungan</span>
                     </a>
                 </div>
             </div>
 
             <!-- Group: Pinjaman & Sewa (Debt & Rent) -->
             <div>
-                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Pinjaman & Sewa</p>
+                <p x-show="!sidebarCollapsed" x-cloak class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 transition-opacity">Pinjaman & Sewa</p>
+                <div x-show="sidebarCollapsed" x-cloak class="my-2 border-t border-slate-100 dark:border-[#1A2438]"></div>
                 <div class="mt-2 space-y-1">
                     <a href="{{ route('debts.index') }}" 
-                       class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('debts.*') && (!request()->has('type') || request('type') === 'all') ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 dark:border dark:border-rose-500/20 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}">
-                        <div class="flex items-center gap-3">
+                       :title="sidebarCollapsed ? 'Hutang & Piutang' : ''"
+                       class="flex items-center rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('debts.*') && (!request()->has('type') || request('type') === 'all') ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 dark:border dark:border-rose-500/20 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}"
+                       :class="sidebarCollapsed ? 'justify-center p-2.5' : 'justify-between px-3 py-2.5'">
+                        <div class="flex items-center" :class="sidebarCollapsed ? 'justify-center' : 'gap-3'">
                             <svg class="w-5 h-5 flex-shrink-0 {{ request()->routeIs('debts.*') ? 'text-rose-600 dark:text-rose-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                             </svg>
-                            <span>Hutang & Piutang</span>
+                            <span x-show="!sidebarCollapsed" x-cloak class="truncate">Hutang & Piutang</span>
                         </div>
                     </a>
 
-                    <!-- Sub-navigasi khusus jenis pinjaman/sewa -->
-                    <div class="pl-7 space-y-0.5 pt-0.5">
+                    <!-- Sub-navigasi khusus jenis pinjaman/sewa (hanya tampil saat expanded) -->
+                    <div x-show="!sidebarCollapsed" x-cloak class="pl-7 space-y-0.5 pt-0.5">
                         <a href="{{ route('debts.index', ['type' => 'receivable']) }}" 
                             class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-medium transition {{ request()->routeIs('debts.*') && request('type') === 'receivable' ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-slate-50 dark:hover:bg-[#162138]' }}">
                             <span class="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0"></span>
@@ -147,20 +195,23 @@
 
             <!-- Group: Keuangan Harian -->
             <div>
-                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Transaksi Harian</p>
+                <p x-show="!sidebarCollapsed" x-cloak class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 transition-opacity">Transaksi Harian</p>
+                <div x-show="sidebarCollapsed" x-cloak class="my-2 border-t border-slate-100 dark:border-[#1A2438]"></div>
                 <div class="mt-2 space-y-1">
                     <a href="{{ route('transactions.index') }}" 
-                       class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('transactions.*') && !request()->has('type') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 dark:border dark:border-indigo-500/20 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}">
-                        <div class="flex items-center gap-3">
+                       :title="sidebarCollapsed ? 'Transaksi Terpadu' : ''"
+                       class="flex items-center rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('transactions.*') && !request()->has('type') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 dark:border dark:border-indigo-500/20 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}"
+                       :class="sidebarCollapsed ? 'justify-center p-2.5' : 'justify-between px-3 py-2.5'">
+                        <div class="flex items-center" :class="sidebarCollapsed ? 'justify-center' : 'gap-3'">
                             <svg class="w-5 h-5 flex-shrink-0 {{ request()->routeIs('transactions.*') && !request()->has('type') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
                             </svg>
-                            <span>Transaksi Terpadu</span>
+                            <span x-show="!sidebarCollapsed" x-cloak class="truncate">Transaksi Terpadu</span>
                         </div>
                     </a>
 
-                    <!-- Sub-navigasi jenis transaksi -->
-                    <div class="pl-7 space-y-0.5 pt-0.5">
+                    <!-- Sub-navigasi jenis transaksi (hanya tampil saat expanded) -->
+                    <div x-show="!sidebarCollapsed" x-cloak class="pl-7 space-y-0.5 pt-0.5">
                         <a href="{{ route('transactions.index') }}" 
                             class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-medium transition {{ request()->routeIs('transactions.*') && !request()->has('type') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-800 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-indigo-700 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-[#162138]' }}">
                             <span class="w-2 h-2 rounded-full bg-indigo-500 flex-shrink-0"></span>
@@ -182,56 +233,82 @@
 
             <!-- Group: Analisis -->
             <div>
-                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Laporan</p>
+                <p x-show="!sidebarCollapsed" x-cloak class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 transition-opacity">Laporan</p>
+                <div x-show="sidebarCollapsed" x-cloak class="my-2 border-t border-slate-100 dark:border-[#1A2438]"></div>
                 <div class="mt-2 space-y-1">
                     <a href="{{ route('reports.index') }}" 
-                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('reports.*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 dark:border dark:border-indigo-500/20 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}">
+                       :title="sidebarCollapsed ? 'Laporan Keuangan' : ''"
+                       class="flex items-center rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('reports.*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 dark:border dark:border-indigo-500/20 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}"
+                       :class="sidebarCollapsed ? 'justify-center p-2.5' : 'gap-3 px-3 py-2.5'">
                         <svg class="w-5 h-5 flex-shrink-0 {{ request()->routeIs('reports.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                         </svg>
-                        Laporan Keuangan
+                        <span x-show="!sidebarCollapsed" x-cloak class="truncate">Laporan Keuangan</span>
                     </a>
                 </div>
             </div>
 
             <!-- Group: Pengaturan & Master Data -->
             <div>
-                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Master Data</p>
+                <p x-show="!sidebarCollapsed" x-cloak class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 transition-opacity">Master Data</p>
+                <div x-show="sidebarCollapsed" x-cloak class="my-2 border-t border-slate-100 dark:border-[#1A2438]"></div>
                 <div class="mt-2 space-y-1">
                     <a href="{{ route('categories.index') }}" 
-                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('categories.*') ? 'bg-slate-100 dark:bg-[#162138] text-slate-900 dark:text-slate-100 dark:border dark:border-[#1E293B] shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}">
+                       :title="sidebarCollapsed ? 'Kategori Transaksi' : ''"
+                       class="flex items-center rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('categories.*') ? 'bg-slate-100 dark:bg-[#162138] text-slate-900 dark:text-slate-100 dark:border dark:border-[#1E293B] shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}"
+                       :class="sidebarCollapsed ? 'justify-center p-2.5' : 'gap-3 px-3 py-2.5'">
                         <svg class="w-5 h-5 flex-shrink-0 {{ request()->routeIs('categories.*') ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                         </svg>
-                        Kategori Transaksi
+                        <span x-show="!sidebarCollapsed" x-cloak class="truncate">Kategori Transaksi</span>
                     </a>
                     <a href="{{ route('payment-methods.index') }}" 
-                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('payment-methods.*') ? 'bg-slate-100 dark:bg-[#162138] text-slate-900 dark:text-slate-100 dark:border dark:border-[#1E293B] shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}">
+                       :title="sidebarCollapsed ? 'Metode Pembayaran' : ''"
+                       class="flex items-center rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('payment-methods.*') ? 'bg-slate-100 dark:bg-[#162138] text-slate-900 dark:text-slate-100 dark:border dark:border-[#1E293B] shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#162138]' }}"
+                       :class="sidebarCollapsed ? 'justify-center p-2.5' : 'gap-3 px-3 py-2.5'">
                         <svg class="w-5 h-5 flex-shrink-0 {{ request()->routeIs('payment-methods.*') ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                         </svg>
-                        Metode Pembayaran
+                        <span x-show="!sidebarCollapsed" x-cloak class="truncate">Metode Pembayaran</span>
                     </a>
                 </div>
             </div>
 
         </div>
 
+        <!-- Sidebar Collapse Toggle Action Rail (Desktop Footer) -->
+        <div class="hidden lg:block px-3 py-2 border-t border-slate-100 dark:border-[#1A2438]">
+            <button @click="toggleSidebarCollapse()" 
+                    type="button"
+                    class="w-full flex items-center rounded-xl text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#162138] transition p-2 cursor-pointer"
+                    :class="sidebarCollapsed ? 'justify-center' : 'gap-3 px-3'"
+                    :title="sidebarCollapsed ? 'Perluas Sidebar' : 'Kecilkan Sidebar'">
+                <svg class="w-4 h-4 transition-transform duration-300 flex-shrink-0" :class="sidebarCollapsed ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+                </svg>
+                <span x-show="!sidebarCollapsed" x-cloak class="truncate">Kecilkan Sidebar</span>
+            </button>
+        </div>
+
         <!-- User Profile Card in Sidebar -->
-        <div class="p-4 border-t border-slate-100 dark:border-[#1A2438] bg-slate-50/70 dark:bg-[#0A0F1D]/80">
-            <div class="flex items-center gap-3">
-                @if (Auth::user()?->avatar)
-                    <img src="{{ Auth::user()->avatar }}" alt="{{ Auth::user()->name }}" class="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-[#1E293B] flex-shrink-0">
-                @else
-                    <div class="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/15 border border-emerald-200 dark:border-emerald-500/25 flex items-center justify-center font-bold text-emerald-800 dark:text-emerald-400 text-sm flex-shrink-0">
-                        {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
-                    </div>
-                @endif
-                <div class="flex-1 min-w-0">
+        <div class="p-3 border-t border-slate-100 dark:border-[#1A2438] bg-slate-50/70 dark:bg-[#0A0F1D]/80 transition-all duration-300">
+            <div class="flex items-center" :class="sidebarCollapsed ? 'justify-center' : 'gap-3'">
+                <a href="{{ route('profile.edit') }}" 
+                   :title="sidebarCollapsed ? '{{ Auth::user()->name ?? 'User' }} — Pengaturan Akun' : ''"
+                   class="relative flex-shrink-0 group">
+                    @if (Auth::user()?->avatar)
+                        <img src="{{ Auth::user()->avatar }}" alt="{{ Auth::user()->name }}" class="w-9 h-9 rounded-full object-cover border border-slate-200 dark:border-[#1E293B] group-hover:ring-2 group-hover:ring-emerald-500 transition">
+                    @else
+                        <div class="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-500/15 border border-emerald-200 dark:border-emerald-500/25 flex items-center justify-center font-bold text-emerald-800 dark:text-emerald-400 text-xs group-hover:ring-2 group-hover:ring-emerald-500 transition">
+                            {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
+                        </div>
+                    @endif
+                </a>
+                <div x-show="!sidebarCollapsed" x-cloak class="flex-1 min-w-0">
                     <p class="text-xs font-bold text-slate-900 dark:text-white truncate">{{ Auth::user()->name ?? 'User' }}</p>
                     <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">{{ Auth::user()->email ?? '' }}</p>
                 </div>
-                <a href="{{ route('profile.edit') }}" title="Pengaturan Akun" class="text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-200/60 dark:hover:bg-[#162138] transition">
+                <a x-show="!sidebarCollapsed" x-cloak href="{{ route('profile.edit') }}" title="Pengaturan Akun" class="text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-200/60 dark:hover:bg-[#162138] transition flex-shrink-0">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -245,13 +322,25 @@
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         
         <!-- Top Navbar -->
-        <header class="h-20 bg-white/90 dark:bg-[#0D1424]/90 border-b border-slate-200/80 dark:border-[#1A2438] backdrop-blur-md px-4 sm:px-6 flex items-center justify-between z-30 shadow-2xs">
+        <header class="app-topbar h-20 bg-white/90 dark:bg-[#0D1424]/90 border-b border-slate-200/80 dark:border-[#1A2438] backdrop-blur-md px-4 sm:px-6 flex items-center justify-between z-30 shadow-2xs">
             <div class="flex items-center gap-3 sm:gap-4">
+                <!-- Mobile Sidebar Toggle -->
                 <button @click="sidebarOpen = true" class="p-2 rounded-xl text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#162138] lg:hidden cursor-pointer">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
+
+                <!-- Desktop Sidebar Minimize Toggle Button -->
+                <button @click="toggleSidebarCollapse()" 
+                        type="button" 
+                        class="hidden lg:flex p-2 rounded-xl text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#162138] border border-slate-200/80 dark:border-[#1E293B] transition cursor-pointer"
+                        :title="sidebarCollapsed ? 'Perluas Sidebar' : 'Kecilkan Sidebar'">
+                    <svg class="w-5 h-5 transition-transform duration-300" :class="sidebarCollapsed ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h16"/>
+                    </svg>
+                </button>
+
                 <div>
                     <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">{{ $header ?? 'Dashboard' }}</h2>
                     <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">{{ $subheader ?? 'Pencatatan dan pengelolaan keuangan pribadi' }}</p>
@@ -290,7 +379,7 @@
         </header>
 
         <!-- Main Scrollable Body -->
-        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 bg-slate-50 dark:bg-[#0A0F1D] transition-colors duration-200">
+        <main id="main-content" class="app-main flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 bg-slate-50 dark:bg-[#0A0F1D] transition-colors duration-200">
             
             <!-- Flash Success Message Toast -->
             @if (session('success'))
