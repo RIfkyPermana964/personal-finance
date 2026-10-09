@@ -437,10 +437,22 @@
                         scales: {
                             y: {
                                 beginAtZero: true,
+                                suggestedMin: 0,
+                                suggestedMax: 1000000,
                                 grid: { color: '#F1F5F9' },
                                 ticks: {
+                                    precision: 0,
                                     callback: function(value) {
-                                        return 'Rp ' + (value / 1000000) + ' Jt';
+                                        if (value === 0) return 'Rp 0';
+                                        if (value >= 1000000) {
+                                            const formatted = (value / 1000000).toLocaleString('id-ID', { maximumFractionDigits: 1 });
+                                            return 'Rp ' + formatted + ' Jt';
+                                        }
+                                        if (value >= 1000) {
+                                            const formatted = (value / 1000).toLocaleString('id-ID', { maximumFractionDigits: 1 });
+                                            return 'Rp ' + formatted + ' Rb';
+                                        }
+                                        return 'Rp ' + value;
                                     }
                                 }
                             },
