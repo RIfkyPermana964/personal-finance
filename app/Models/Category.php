@@ -20,6 +20,7 @@ class Category extends Model
         'icon',
         'color',
         'is_active',
+        'sort_order',
     ];
 
     protected function casts(): array
@@ -27,6 +28,7 @@ class Category extends Model
         return [
             'type' => CategoryType::class,
             'is_active' => 'boolean',
+            'sort_order' => 'integer',
         ];
     }
 
@@ -42,7 +44,7 @@ class Category extends Model
 
     public function children(): HasMany
     {
-        return $this->hasMany(Category::class, 'parent_id');
+        return $this->hasMany(Category::class, 'parent_id')->orderBy('sort_order')->orderBy('id');
     }
 
     public function transactions(): HasMany

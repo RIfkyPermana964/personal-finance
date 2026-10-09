@@ -1,8 +1,10 @@
 import Alpine from 'alpinejs';
 import Chart from 'chart.js/auto';
+import Sortable from 'sortablejs';
 
 window.Alpine = Alpine;
 window.Chart = Chart;
+window.Sortable = Sortable;
 
 // Global Formatters
 window.formatRupiah = function(number) {

@@ -294,7 +294,14 @@
         <form method="POST" action="{{ route('transactions.store') }}" class="space-y-4">
             @csrf
 
-            <!-- 1. Dropdown Jenis Transaksi (Pengeluaran vs Pemasukan) -->
+            <!-- 1. Keterangan / Catatan (Paling Atas) -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Keterangan / Catatan (Opsional)</label>
+                <input type="text" name="description" placeholder="Contoh: Belanja mingguan, Gaji bulanan, Kopi & makan siang"
+                       class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <!-- 2. Dropdown Jenis Transaksi (Pengeluaran vs Pemasukan) -->
             <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1.5">Jenis Transaksi *</label>
                 <div class="relative">
@@ -311,7 +318,7 @@
                 </p>
             </div>
 
-            <!-- 2. Nominal Transaksi (dengan ribuan otomatis via x-money) -->
+            <!-- 3. Nominal Transaksi (dengan ribuan otomatis via x-money) -->
             <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1.5">Nominal (Rp) *</label>
                 <div class="relative rounded-xl shadow-2xs">
@@ -325,7 +332,7 @@
                 <p class="mt-1 text-[11px] text-slate-400">Titik pemisah ribuan otomatis ditambahkan saat mengetik</p>
             </div>
 
-            <!-- 3. Kategori (Dinamis sesuai Jenis Transaksi) -->
+            <!-- 4. Kategori (Dinamis sesuai Jenis Transaksi) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1.5">Kategori *</label>
@@ -358,7 +365,7 @@
                     </div>
                 </div>
 
-                <!-- 4. Metode Pembayaran -->
+                <!-- Metode Pembayaran -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1.5">Metode Bayar / Kas *</label>
                     <select name="payment_method_id" required 
@@ -376,13 +383,6 @@
                 <label class="block text-xs font-bold text-slate-700 mb-1.5">Tanggal Transaksi *</label>
                 <input type="date" name="transaction_date" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" required
                        class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-indigo-500">
-            </div>
-
-            <!-- 6. Keterangan / Deskripsi -->
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1.5">Keterangan / Catatan (Opsional)</label>
-                <input type="text" name="description" placeholder="Contoh: Belanja mingguan, Gaji bulanan, Kopi & makan siang"
-                       class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500">
             </div>
 
             <!-- Modal Footer -->
@@ -405,7 +405,14 @@
             @csrf
             @method('PUT')
 
-            <!-- 1. Dropdown Jenis Transaksi -->
+            <!-- 1. Keterangan / Deskripsi (Paling Atas) -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Keterangan / Catatan</label>
+                <input type="text" name="description" x-model="editData.description" placeholder="Contoh: Belanja mingguan, Gaji bulanan, Kopi & makan siang"
+                       class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <!-- 2. Dropdown Jenis Transaksi -->
             <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1.5">Jenis Transaksi *</label>
                 <select name="type" x-model="editData.type" required
@@ -416,7 +423,7 @@
                 </select>
             </div>
 
-            <!-- 2. Nominal Transaksi -->
+            <!-- 3. Nominal Transaksi -->
             <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1.5">Nominal (Rp) *</label>
                 <div class="relative rounded-xl shadow-2xs">
@@ -429,7 +436,7 @@
                 <p class="mt-1 text-[11px] text-slate-400">Titik pemisah ribuan otomatis ditambahkan saat mengetik</p>
             </div>
 
-            <!-- 3. Kategori Dinamis -->
+            <!-- 4. Kategori Dinamis -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1.5">Kategori *</label>
@@ -462,7 +469,7 @@
                     </div>
                 </div>
 
-                <!-- 4. Metode Bayar -->
+                <!-- Metode Bayar -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1.5">Metode Bayar *</label>
                     <select name="payment_method_id" x-model="editData.payment_method_id" required
@@ -480,13 +487,6 @@
                 <label class="block text-xs font-bold text-slate-700 mb-1.5">Tanggal Transaksi *</label>
                 <input type="date" name="transaction_date" x-model="editData.transaction_date" required
                        class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-indigo-500">
-            </div>
-
-            <!-- 6. Keterangan -->
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1.5">Keterangan / Deskripsi</label>
-                <input type="text" name="description" x-model="editData.description"
-                       class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500">
             </div>
 
             <!-- Modal Footer -->

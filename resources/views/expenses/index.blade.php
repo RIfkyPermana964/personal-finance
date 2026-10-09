@@ -112,6 +112,11 @@
             @csrf
             <input type="hidden" name="type" value="expense">
             <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Keterangan Pengeluaran (Opsional)</label>
+                <input type="text" name="description" placeholder="Contoh: Makan Siang, Bensin, Tagihan Wifi"
+                       class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-500">
+            </div>
+            <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1.5">Nominal (Rp) *</label>
                 <div class="relative rounded-xl shadow-2xs">
                     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 font-bold text-sm">Rp</div>
@@ -155,11 +160,6 @@
                 <input type="date" name="transaction_date" value="{{ $defaultDate }}" required
                        class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-rose-500">
             </div>
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1.5">Keterangan Pengeluaran (Opsional)</label>
-                <input type="text" name="description" placeholder="Contoh: Makan Siang, Bensin, Tagihan Wifi"
-                       class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-500">
-            </div>
             <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
                 <button type="button" @click="createModal = false" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold cursor-pointer">Batal</button>
                 <button type="submit" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer">Simpan Pengeluaran</button>
@@ -173,6 +173,11 @@
             @csrf
             @method('PUT')
             <input type="hidden" name="type" value="expense">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Keterangan Pengeluaran</label>
+                <input type="text" name="description" x-model="editData.description" placeholder="Contoh: Makan Siang, Bensin, Tagihan Wifi"
+                       class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-500">
+            </div>
             <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1.5">Nominal (Rp) *</label>
                 <div class="relative rounded-xl shadow-2xs">
@@ -211,11 +216,6 @@
                 <label class="block text-xs font-bold text-slate-700 mb-1.5">Tanggal *</label>
                 <input type="date" name="transaction_date" x-model="editData.transaction_date" required
                        class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-rose-500">
-            </div>
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1.5">Keterangan Pengeluaran</label>
-                <input type="text" name="description" x-model="editData.description"
-                       class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-500">
             </div>
             <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
                 <button type="button" @click="editModal = false" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold cursor-pointer">Batal</button>

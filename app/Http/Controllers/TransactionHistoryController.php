@@ -69,9 +69,21 @@ class TransactionHistoryController extends Controller
         $totalExpense = (clone $summaryQuery)->where('type', TransactionType::EXPENSE)->sum('amount');
         $netCashflow = $totalIncome - $totalExpense;
 
-        $categories = Category::forUser($userId)->where('is_active', true)->orderBy('type')->orderBy('name')->get();
-        $expenseCategories = Category::with('children')->forUser($userId)->where('type', CategoryType::EXPENSE)->whereNull('parent_id')->where('is_active', true)->get();
-        $incomeCategories = Category::forUser($userId)->where('type', CategoryType::INCOME)->where('is_active', true)->orderBy('name')->get();
+        $categories = Category::forUser($userId)->where('is_active', true)->orderBy('type')->orderBy('sort_order')->orderBy('name')->get();
+        $expenseCategories = Category::with(['children' => fn ($q) => $q->orderBy('sort_order')->orderBy('id')])
+            ->forUser($userId)
+            ->where('type', CategoryType::EXPENSE)
+            ->whereNull('parent_id')
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
+        $incomeCategories = Category::forUser($userId)
+            ->where('type', CategoryType::INCOME)
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
         $paymentMethods = PaymentMethod::forUser($userId)->where('is_active', true)->get();
 
         return view('transactions.index', compact(

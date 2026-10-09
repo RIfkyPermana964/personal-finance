@@ -34,7 +34,14 @@ class ExpenseController extends Controller
         ];
 
         $transactions = $this->transactionService->getPaginatedTransactions($userId, $filters, 15);
-        $categories = Category::with('children')->forUser($userId)->where('type', CategoryType::EXPENSE)->whereNull('parent_id')->where('is_active', true)->get();
+        $categories = Category::with(['children' => fn ($q) => $q->orderBy('sort_order')->orderBy('id')])
+            ->forUser($userId)
+            ->where('type', CategoryType::EXPENSE)
+            ->whereNull('parent_id')
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
         $allCategories = Category::forUser($userId)->where('type', CategoryType::EXPENSE)->where('is_active', true)->get();
         $paymentMethods = PaymentMethod::forUser($userId)->where('is_active', true)->get();
 
