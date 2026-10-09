@@ -2,10 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Enums\DebtStatus;
+use App\Enums\DebtType;
 use App\Enums\SavingGoalStatus;
 use App\Enums\TransactionType;
 use App\Models\Budget;
 use App\Models\Category;
+use App\Models\Debt;
 use App\Models\MonthlyBalance;
 use App\Models\PaymentMethod;
 use App\Models\SalaryAllocation;
@@ -20,7 +23,9 @@ class DemoDataSeeder extends Seeder
     public function run(): void
     {
         $user = User::first();
-        if (!$user) return;
+        if (! $user) {
+            return;
+        }
 
         $incomeGaji = Category::where('name', 'Gaji Bulanan')->first();
         $incomeSide = Category::where('name', 'Freelance & Side Job')->first();
@@ -104,10 +109,18 @@ class DemoDataSeeder extends Seeder
         $parentTransport = Category::where('name', 'Transportasi')->first();
         $parentLifestyle = Category::where('name', 'Lifestyle & Hiburan')->first();
 
-        if ($parentPokok) Budget::create(['user_id' => $user->id, 'category_id' => $parentPokok->id, 'month' => $currentMonth, 'year' => $currentYear, 'amount' => 1800000.00]);
-        if ($parentTagihan) Budget::create(['user_id' => $user->id, 'category_id' => $parentTagihan->id, 'month' => $currentMonth, 'year' => $currentYear, 'amount' => 1700000.00]);
-        if ($parentTransport) Budget::create(['user_id' => $user->id, 'category_id' => $parentTransport->id, 'month' => $currentMonth, 'year' => $currentYear, 'amount' => 500000.00]);
-        if ($parentLifestyle) Budget::create(['user_id' => $user->id, 'category_id' => $parentLifestyle->id, 'month' => $currentMonth, 'year' => $currentYear, 'amount' => 500000.00]);
+        if ($parentPokok) {
+            Budget::create(['user_id' => $user->id, 'category_id' => $parentPokok->id, 'month' => $currentMonth, 'year' => $currentYear, 'amount' => 1800000.00]);
+        }
+        if ($parentTagihan) {
+            Budget::create(['user_id' => $user->id, 'category_id' => $parentTagihan->id, 'month' => $currentMonth, 'year' => $currentYear, 'amount' => 1700000.00]);
+        }
+        if ($parentTransport) {
+            Budget::create(['user_id' => $user->id, 'category_id' => $parentTransport->id, 'month' => $currentMonth, 'year' => $currentYear, 'amount' => 500000.00]);
+        }
+        if ($parentLifestyle) {
+            Budget::create(['user_id' => $user->id, 'category_id' => $parentLifestyle->id, 'month' => $currentMonth, 'year' => $currentYear, 'amount' => 500000.00]);
+        }
 
         // 5. Riwayat Transaksi 3 Bulan
         for ($m = 2; $m >= 0; $m--) {
@@ -122,7 +135,7 @@ class DemoDataSeeder extends Seeder
                 'payment_method_id' => $payBCA?->id,
                 'amount' => 6000000.00,
                 'transaction_date' => $salaryDate->toDateString(),
-                'description' => 'Gaji Bulan ' . $salaryDate->translatedFormat('F Y'),
+                'description' => 'Gaji Bulan '.$salaryDate->translatedFormat('F Y'),
             ]);
 
             // Alokasi ke Dana Darurat
@@ -189,6 +202,68 @@ class DemoDataSeeder extends Seeder
                 'amount' => 1000000.00,
                 'transaction_date' => $salaryDate->copy()->addDays(2)->toDateString(),
                 'description' => 'Kirim Orang Tua',
+            ]);
+
+            // 6. Data Hutang & Piutang (Debts & Loans)
+            // Piutang: Dipinjam Teman (Andi)
+            $piutangAndi = Debt::create([
+                'user_id' => $user->id,
+                'type' => DebtType::RECEIVABLE,
+                'name' => 'Andi Pratama (Teman Kantor)',
+                'total_amount' => 1500000.00,
+                'paid_amount' => 500000.00,
+                'remaining_amount' => 1000000.00,
+                'start_date' => Carbon::now()->subDays(15)->toDateString(),
+                'due_date' => Carbon::now()->addDays(15)->toDateString(),
+                'status' => DebtStatus::NYICIL,
+                'notes' => 'Pinjam untuk servis motor, janji transfer 2x',
+            ]);
+            $piutangAndi->payments()->create([
+                'amount' => 500000.00,
+                'payment_date' => Carbon::now()->subDays(3)->toDateString(),
+                'payment_method_id' => $payBCA?->id,
+                'notes' => 'Cicilan pertama via BCA',
+            ]);
+
+            // Hutang: Pinjaman Laptop
+            $hutangLaptop = Debt::create([
+                'user_id' => $user->id,
+                'type' => DebtType::DEBT,
+                'name' => 'Pinjaman Laptop / Gadget',
+                'total_amount' => 5000000.00,
+                'paid_amount' => 2000000.00,
+                'remaining_amount' => 3000000.00,
+                'start_date' => Carbon::now()->subMonths(2)->toDateString(),
+                'due_date' => Carbon::now()->addMonths(3)->toDateString(),
+                'status' => DebtStatus::NYICIL,
+                'notes' => 'Cicilan tanpa bunga, potong tiap tanggal 28',
+            ]);
+            $hutangLaptop->payments()->create([
+                'amount' => 1000000.00,
+                'payment_date' => Carbon::now()->subMonth()->toDateString(),
+                'payment_method_id' => $payBCA?->id,
+                'notes' => 'Cicilan bulan lalu',
+            ]);
+            $hutangLaptop->payments()->create([
+                'amount' => 1000000.00,
+                'payment_date' => Carbon::now()->subDays(5)->toDateString(),
+                'payment_method_id' => $payBCA?->id,
+                'notes' => 'Cicilan bulan ini',
+            ]);
+
+            // Sewa: Kos Bulanan
+            Debt::create([
+                'user_id' => $user->id,
+                'type' => DebtType::RENT,
+                'name' => 'Sewa Kosan Paviliun',
+                'rent_type' => 'Kost Bulanan',
+                'total_amount' => 1200000.00,
+                'paid_amount' => 0.00,
+                'remaining_amount' => 1200000.00,
+                'start_date' => Carbon::now()->startOfMonth()->toDateString(),
+                'due_date' => Carbon::now()->endOfMonth()->toDateString(),
+                'status' => DebtStatus::UNPAID,
+                'notes' => 'Tagihan sewa kamar + listrik ac bulan ini',
             ]);
         }
     }

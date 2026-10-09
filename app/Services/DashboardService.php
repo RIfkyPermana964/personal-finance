@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use App\Enums\DebtStatus;
+use App\Enums\DebtType;
 use App\Enums\SavingGoalStatus;
 use App\Enums\TransactionType;
-use App\Models\Category;
+use App\Models\Debt;
 use App\Models\SavingGoal;
 use App\Models\Transaction;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class DashboardService
 {
@@ -55,7 +56,7 @@ class DashboardService
         // 6. Total Tabungan di Seluruh Target
         $totalSavings = (float) SavingGoal::where('user_id', $userId)->sum('current_amount');
         $totalTargetSavings = (float) SavingGoal::where('user_id', $userId)->where('status', '!=', SavingGoalStatus::CANCELLED)->sum('target_amount');
-        
+
         $savingProgressPct = $totalTargetSavings > 0 ? min(100, round(($totalSavings / $totalTargetSavings) * 100, 1)) : 0;
         $savingRateMonth = $incomeMonth > 0 ? min(100, round(($savingDepositMonth / $incomeMonth) * 100, 1)) : 0;
 
@@ -134,7 +135,7 @@ class DashboardService
             $categoryName = $tx->category?->parent?->name ?? $tx->category?->name ?? 'Lainnya';
             $categoryColor = $tx->category?->parent?->color ?? $tx->category?->color ?? '#64748b';
 
-            if (!isset($grouped[$categoryName])) {
+            if (! isset($grouped[$categoryName])) {
                 $grouped[$categoryName] = 0;
                 $colors[$categoryName] = $categoryColor;
             }
@@ -147,6 +148,33 @@ class DashboardService
             'labels' => array_keys($grouped),
             'data' => array_values($grouped),
             'colors' => array_values($colors),
+        ];
+    }
+
+    public function getDebtsSummary(int $userId): array
+    {
+        $allDebts = Debt::where('user_id', $userId)->get();
+
+        $totalReceivableUnpaid = (float) $allDebts->where('type', DebtType::RECEIVABLE)
+            ->where('status', '!=', DebtStatus::PAID)
+            ->sum('remaining_amount');
+
+        $totalDebtUnpaid = (float) $allDebts->where('type', DebtType::DEBT)
+            ->where('status', '!=', DebtStatus::PAID)
+            ->sum('remaining_amount');
+
+        $totalRentUnpaid = (float) $allDebts->where('type', DebtType::RENT)
+            ->where('status', '!=', DebtStatus::PAID)
+            ->sum('remaining_amount');
+
+        return [
+            'receivable_unpaid' => $totalReceivableUnpaid,
+            'debt_unpaid' => $totalDebtUnpaid,
+            'rent_unpaid' => $totalRentUnpaid,
+            'receivable_count' => $allDebts->where('type', DebtType::RECEIVABLE)->where('status', '!=', DebtStatus::PAID)->count(),
+            'debt_count' => $allDebts->where('type', DebtType::DEBT)->where('status', '!=', DebtStatus::PAID)->count(),
+            'rent_count' => $allDebts->where('type', DebtType::RENT)->where('status', '!=', DebtStatus::PAID)->count(),
+            'total_active' => $allDebts->where('status', '!=', DebtStatus::PAID)->count(),
         ];
     }
 }

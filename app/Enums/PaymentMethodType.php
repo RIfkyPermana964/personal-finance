@@ -13,7 +13,7 @@ enum PaymentMethodType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::CASH => 'Tunai (Cash)',
             self::BANK => 'Transfer Bank',
             self::EWALLET => 'E-Wallet',

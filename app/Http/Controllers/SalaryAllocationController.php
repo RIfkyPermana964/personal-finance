@@ -30,6 +30,9 @@ class SalaryAllocationController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        if ($request->has('amount')) {
+            $request->merge(['amount' => preg_replace('/\D/', '', (string) $request->amount)]);
+        }
         $validated = $request->validate([
             'month' => ['required', 'integer', 'between:1,12'],
             'year' => ['required', 'integer', 'min:2020', 'max:2050'],
@@ -57,6 +60,15 @@ class SalaryAllocationController extends Controller
 
     public function updateBalance(Request $request): RedirectResponse
     {
+        $merge = [];
+        foreach (['total_salary', 'cash_initial', 'bank_initial'] as $field) {
+            if ($request->has($field)) {
+                $merge[$field] = preg_replace('/\D/', '', (string) $request->$field);
+            }
+        }
+        if (! empty($merge)) {
+            $request->merge($merge);
+        }
         $validated = $request->validate([
             'month' => ['required', 'integer', 'between:1,12'],
             'year' => ['required', 'integer', 'min:2020', 'max:2050'],
@@ -75,8 +87,11 @@ class SalaryAllocationController extends Controller
     {
         abort_if($salaryAllocation->user_id !== $request->user()->id, 403);
 
+        $month = $salaryAllocation->month;
+        $year = $salaryAllocation->year;
         $this->allocationService->deleteAllocation($salaryAllocation);
 
-        return redirect()->back()->with('success', 'Pos pengeluaran gaji berhasil dihapus.');
+        return redirect()->route('salary-allocations.index', ['month' => $month, 'year' => $year])
+            ->with('success', 'Pos pengeluaran gaji berhasil dihapus.');
     }
 }

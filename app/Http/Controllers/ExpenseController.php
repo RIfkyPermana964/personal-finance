@@ -54,7 +54,10 @@ class ExpenseController extends Controller
 
         $this->transactionService->createTransaction($request->user()->id, $data);
 
-        return redirect()->route('expenses.index')->with('success', 'Data pengeluaran berhasil dicatat!');
+        $txDate = Carbon::parse($data['transaction_date']);
+
+        return redirect()->route('expenses.index', ['month' => $txDate->month, 'year' => $txDate->year])
+            ->with('success', 'Data pengeluaran berhasil dicatat!');
     }
 
     public function update(StoreTransactionRequest $request, Transaction $expense): RedirectResponse
@@ -66,15 +69,20 @@ class ExpenseController extends Controller
 
         $this->transactionService->updateTransaction($expense, $data);
 
-        return redirect()->route('expenses.index')->with('success', 'Data pengeluaran berhasil diperbarui!');
+        $txDate = Carbon::parse($data['transaction_date']);
+
+        return redirect()->route('expenses.index', ['month' => $txDate->month, 'year' => $txDate->year])
+            ->with('success', 'Data pengeluaran berhasil diperbarui!');
     }
 
     public function destroy(Request $request, Transaction $expense): RedirectResponse
     {
         abort_if($expense->user_id !== $request->user()->id, 403);
 
+        $txDate = Carbon::parse($expense->transaction_date);
         $this->transactionService->deleteTransaction($expense);
 
-        return redirect()->route('expenses.index')->with('success', 'Data pengeluaran berhasil dihapus.');
+        return redirect()->route('expenses.index', ['month' => $txDate->month, 'year' => $txDate->year])
+            ->with('success', 'Data pengeluaran berhasil dihapus.');
     }
 }

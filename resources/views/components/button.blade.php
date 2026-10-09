@@ -2,11 +2,12 @@
 
 @php
 $variantClass = match($variant) {
-    'primary' => 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/20 border border-emerald-500/30',
-    'secondary' => 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700',
-    'danger' => 'bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/20 border border-rose-500/30',
-    'indigo' => 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/20 border border-indigo-500/30',
-    default => 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700',
+    'primary' => 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm hover:shadow-md border border-transparent',
+    'secondary' => 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-xs hover:border-slate-300',
+    'danger' => 'bg-rose-600 hover:bg-rose-700 text-white shadow-sm hover:shadow-md border border-transparent',
+    'indigo' => 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md border border-transparent',
+    'amber' => 'bg-amber-600 hover:bg-amber-700 text-white shadow-sm hover:shadow-md border border-transparent',
+    default => 'bg-slate-900 hover:bg-slate-800 text-white border border-transparent',
 };
 @endphp
 

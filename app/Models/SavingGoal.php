@@ -50,6 +50,7 @@ class SavingGoal extends Model
         }
 
         $percentage = ($this->current_amount / $this->target_amount) * 100;
+
         return (float) min(100, round($percentage, 1));
     }
 

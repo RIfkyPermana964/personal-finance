@@ -13,10 +13,20 @@ class StoreTransactionRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('amount')) {
+            $cleaned = preg_replace('/[^0-9]/', '', (string) $this->amount);
+            $this->merge([
+                'amount' => $cleaned !== '' ? (float) $cleaned : null,
+            ]);
+        }
+    }
+
     public function rules(): array
     {
         return [
-            'type' => ['required', Rule::enum(TransactionType::class)],
+            'type' => ['nullable', Rule::enum(TransactionType::class)],
             'amount' => ['required', 'numeric', 'min:1'],
             'transaction_date' => ['required', 'date'],
             'category_id' => ['nullable', 'exists:categories,id'],
@@ -29,7 +39,6 @@ class StoreTransactionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'type.required' => 'Tipe transaksi wajib dipilih.',
             'amount.required' => 'Nominal transaksi wajib diisi.',
             'amount.min' => 'Nominal transaksi minimal Rp 1.',
             'transaction_date.required' => 'Tanggal transaksi wajib diisi.',

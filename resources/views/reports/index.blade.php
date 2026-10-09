@@ -3,17 +3,17 @@
     <!-- Filter Periode Laporan -->
     <x-card class="mb-6" x-data="{ currentType: '{{ $periodType }}' }">
         <form method="GET" action="{{ route('reports.index') }}" class="space-y-4">
-            <div class="flex flex-wrap items-center gap-3 border-b border-slate-800/80 pb-3">
-                <span class="text-xs font-bold text-slate-300">Tipe Periode:</span>
-                <label class="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer">
+            <div class="flex flex-wrap items-center gap-3 border-b border-slate-100 pb-3">
+                <span class="text-xs font-bold text-slate-700">Tipe Periode:</span>
+                <label class="flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer">
                     <input type="radio" name="period_type" value="monthly" x-model="currentType" class="text-indigo-600 focus:ring-indigo-500">
                     <span>Bulanan</span>
                 </label>
-                <label class="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer">
+                <label class="flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer">
                     <input type="radio" name="period_type" value="yearly" x-model="currentType" class="text-indigo-600 focus:ring-indigo-500">
                     <span>Tahunan</span>
                 </label>
-                <label class="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer">
+                <label class="flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer">
                     <input type="radio" name="period_type" value="custom" x-model="currentType" class="text-indigo-600 focus:ring-indigo-500">
                     <span>Custom Rentang Tanggal</span>
                 </label>
@@ -22,14 +22,14 @@
             <div class="flex flex-wrap items-center gap-4">
                 <!-- Monthly Filter -->
                 <div x-show="currentType === 'monthly'" class="flex items-center gap-2">
-                    <select name="month" class="px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white">
+                    <select name="month" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-indigo-500">
                         @for ($m = 1; $m <= 12; $m++)
                             <option value="{{ $m }}" {{ $month == $m ? 'selected' : '' }}>
                                 {{ \Carbon\Carbon::createFromDate(null, $m, 1)->translatedFormat('F') }}
                             </option>
                         @endfor
                     </select>
-                    <select name="year" class="px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white">
+                    <select name="year" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-indigo-500">
                         @for ($y = Carbon\Carbon::now()->year - 3; $y <= Carbon\Carbon::now()->year + 1; $y++)
                             <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
                         @endfor
@@ -38,7 +38,7 @@
 
                 <!-- Yearly Filter -->
                 <div x-show="currentType === 'yearly'" class="flex items-center gap-2">
-                    <select name="year" class="px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white">
+                    <select name="year" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-indigo-500">
                         @for ($y = Carbon\Carbon::now()->year - 3; $y <= Carbon\Carbon::now()->year + 1; $y++)
                             <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>Tahun {{ $y }}</option>
                         @endfor
@@ -47,12 +47,12 @@
 
                 <!-- Custom Range Filter -->
                 <div x-show="currentType === 'custom'" class="flex items-center gap-2">
-                    <input type="date" name="start_date" value="{{ $startDate }}" class="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white">
-                    <span class="text-xs text-slate-300">s/d</span>
-                    <input type="date" name="end_date" value="{{ $endDate }}" class="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white">
+                    <input type="date" name="start_date" value="{{ $startDate }}" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-indigo-500">
+                    <span class="text-xs text-slate-400 font-medium">s/d</span>
+                    <input type="date" name="end_date" value="{{ $endDate }}" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-indigo-500">
                 </div>
 
-                <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30 transition cursor-pointer">
+                <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs transition cursor-pointer">
                     Tampilkan Laporan
                 </button>
             </div>
@@ -62,11 +62,11 @@
     <!-- Report Header Title -->
     <div class="flex items-center justify-between">
         <div>
-            <span class="text-xs text-slate-300 uppercase font-semibold">Hasil Laporan Periode</span>
-            <h3 class="text-lg font-bold text-white">{{ $report['period_label'] }}</h3>
+            <span class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Hasil Laporan Periode</span>
+            <h3 class="text-lg font-bold text-slate-900">{{ $report['period_label'] }}</h3>
         </div>
-        <div class="text-right text-xs text-slate-300">
-            Total Transaksi: <strong class="text-white">{{ $report['transaction_count'] }}</strong> catatan
+        <div class="text-right text-xs text-slate-500">
+            Total Transaksi: <strong class="text-slate-900 font-bold">{{ $report['transaction_count'] }}</strong> catatan
         </div>
     </div>
 
@@ -100,7 +100,7 @@
             </x-slot:icon>
         </x-stat-card>
 
-        <x-stat-card title="Saving Rate (Tingkat Tabungan)" 
+        <x-stat-card title="Saving Rate (Tabungan)" 
                      value="{{ $report['saving_rate'] }}%" 
                      subtitle="Alokasi: Rp {{ number_format($report['total_saving_deposit'], 0, ',', '.') }}" 
                      color="amber">
@@ -117,18 +117,18 @@
         <!-- Pemasukan Berdasarkan Kategori -->
         <x-card title="Rincian Pemasukan per Kategori">
             @if (empty($report['income_by_category']))
-                <p class="py-8 text-center text-slate-300 text-xs">Tidak ada data pemasukan pada periode ini.</p>
+                <p class="py-8 text-center text-slate-400 text-xs">Tidak ada data pemasukan pada periode ini.</p>
             @else
                 <div class="space-y-3">
                     @foreach ($report['income_by_category'] as $cat => $amt)
                         @php $pct = $report['total_income'] > 0 ? round(($amt / $report['total_income']) * 100, 1) : 0; @endphp
-                        <div class="space-y-1 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/60">
+                        <div class="space-y-1.5 p-3 rounded-xl bg-slate-50 border border-slate-100">
                             <div class="flex items-center justify-between text-xs">
-                                <span class="font-bold text-white">{{ $cat }}</span>
-                                <span class="font-mono text-emerald-400 font-bold">Rp {{ number_format($amt, 0, ',', '.') }} ({{ $pct }}%)</span>
+                                <span class="font-bold text-slate-900">{{ $cat }}</span>
+                                <span class="font-mono text-emerald-700 font-bold">Rp {{ number_format($amt, 0, ',', '.') }} ({{ $pct }}%)</span>
                             </div>
-                            <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                                <div class="h-1.5 rounded-full bg-emerald-500" style="width: {{ $pct }}%"></div>
+                            <div class="w-full bg-slate-200/70 rounded-full h-2 overflow-hidden">
+                                <div class="h-2 rounded-full bg-emerald-500" style="width: {{ $pct }}%"></div>
                             </div>
                         </div>
                     @endforeach
@@ -139,18 +139,18 @@
         <!-- Pengeluaran Berdasarkan Kategori -->
         <x-card title="Rincian Pengeluaran per Kategori">
             @if (empty($report['expense_by_category']))
-                <p class="py-8 text-center text-slate-300 text-xs">Tidak ada data pengeluaran pada periode ini.</p>
+                <p class="py-8 text-center text-slate-400 text-xs">Tidak ada data pengeluaran pada periode ini.</p>
             @else
                 <div class="space-y-3">
                     @foreach ($report['expense_by_category'] as $cat => $amt)
                         @php $pct = $report['total_expense'] > 0 ? round(($amt / $report['total_expense']) * 100, 1) : 0; @endphp
-                        <div class="space-y-1 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/60">
+                        <div class="space-y-1.5 p-3 rounded-xl bg-slate-50 border border-slate-100">
                             <div class="flex items-center justify-between text-xs">
-                                <span class="font-bold text-white">{{ $cat }}</span>
-                                <span class="font-mono text-rose-400 font-bold">Rp {{ number_format($amt, 0, ',', '.') }} ({{ $pct }}%)</span>
+                                <span class="font-bold text-slate-900">{{ $cat }}</span>
+                                <span class="font-mono text-rose-700 font-bold">Rp {{ number_format($amt, 0, ',', '.') }} ({{ $pct }}%)</span>
                             </div>
-                            <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                                <div class="h-1.5 rounded-full bg-rose-500" style="width: {{ $pct }}%"></div>
+                            <div class="w-full bg-slate-200/70 rounded-full h-2 overflow-hidden">
+                                <div class="h-2 rounded-full bg-rose-500" style="width: {{ $pct }}%"></div>
                             </div>
                         </div>
                     @endforeach

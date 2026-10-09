@@ -11,6 +11,16 @@ class StoreBudgetRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('amount')) {
+            $cleaned = preg_replace('/[^0-9]/', '', (string) $this->amount);
+            $this->merge([
+                'amount' => $cleaned !== '' ? (float) $cleaned : null,
+            ]);
+        }
+    }
+
     public function rules(): array
     {
         return [

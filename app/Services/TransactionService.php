@@ -16,36 +16,36 @@ class TransactionService
         $query = Transaction::with(['category.parent', 'paymentMethod', 'savingGoal'])
             ->where('user_id', $userId);
 
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('description', 'like', "%{$search}%")
-                  ->orWhereHas('category', function ($cq) use ($search) {
-                      $cq->where('name', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('paymentMethod', function ($pq) use ($search) {
-                      $pq->where('name', 'like', "%{$search}%");
-                  });
+                    ->orWhereHas('category', function ($cq) use ($search) {
+                        $cq->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('paymentMethod', function ($pq) use ($search) {
+                        $pq->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 
-        if (!empty($filters['type'])) {
+        if (! empty($filters['type'])) {
             $query->where('type', $filters['type']);
         }
 
-        if (!empty($filters['category_id'])) {
+        if (! empty($filters['category_id'])) {
             $query->where('category_id', $filters['category_id']);
         }
 
-        if (!empty($filters['payment_method_id'])) {
+        if (! empty($filters['payment_method_id'])) {
             $query->where('payment_method_id', $filters['payment_method_id']);
         }
 
-        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+        if (! empty($filters['start_date']) && ! empty($filters['end_date'])) {
             $query->whereBetween('transaction_date', [$filters['start_date'], $filters['end_date']]);
-        } elseif (!empty($filters['month']) && !empty($filters['year'])) {
+        } elseif (! empty($filters['month']) && ! empty($filters['year'])) {
             $query->whereYear('transaction_date', $filters['year'])
-                  ->whereMonth('transaction_date', $filters['month']);
+                ->whereMonth('transaction_date', $filters['month']);
         }
 
         $sort = $filters['sort'] ?? 'transaction_date';
@@ -75,7 +75,7 @@ class TransactionService
                 'receipt_image' => $data['receipt_image'] ?? null,
             ]);
 
-            if (!empty($transaction->saving_goal_id)) {
+            if (! empty($transaction->saving_goal_id)) {
                 $this->syncSavingGoalBalance($transaction->saving_goal_id);
             }
 
@@ -137,7 +137,9 @@ class TransactionService
     public function syncSavingGoalBalance(int $goalId): void
     {
         $goal = SavingGoal::find($goalId);
-        if (!$goal) return;
+        if (! $goal) {
+            return;
+        }
 
         $deposits = Transaction::where('saving_goal_id', $goalId)
             ->where('type', TransactionType::SAVING_DEPOSIT)

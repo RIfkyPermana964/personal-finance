@@ -9,7 +9,7 @@ enum CategoryType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::INCOME => 'Pemasukan',
             self::EXPENSE => 'Pengeluaran',
         };

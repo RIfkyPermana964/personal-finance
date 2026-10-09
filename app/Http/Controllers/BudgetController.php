@@ -47,8 +47,11 @@ class BudgetController extends Controller
     {
         abort_if($budget->user_id !== $request->user()->id, 403);
 
+        $month = $budget->month;
+        $year = $budget->year;
         $this->budgetService->deleteBudget($budget);
 
-        return redirect()->back()->with('success', 'Pagu anggaran berhasil dihapus.');
+        return redirect()->route('budgets.index', ['month' => $month, 'year' => $year])
+            ->with('success', 'Pagu anggaran berhasil dihapus.');
     }
 }

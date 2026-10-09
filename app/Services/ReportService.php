@@ -24,7 +24,7 @@ class ReportService
             $periodLabel = "Tahun {$year}";
         } elseif ($periodType === 'custom' && $startDate && $endDate) {
             $query->whereBetween('transaction_date', [$startDate, $endDate]);
-            $periodLabel = Carbon::parse($startDate)->translatedFormat('d M Y') . ' - ' . Carbon::parse($endDate)->translatedFormat('d M Y');
+            $periodLabel = Carbon::parse($startDate)->translatedFormat('d M Y').' - '.Carbon::parse($endDate)->translatedFormat('d M Y');
         } else {
             $query->whereYear('transaction_date', $year)->whereMonth('transaction_date', $month);
             $periodLabel = Carbon::createFromDate($year, $month, 1)->translatedFormat('F Y');
@@ -43,7 +43,7 @@ class ReportService
 
         foreach ($transactions as $tx) {
             $amt = (float) $tx->amount;
-            $catName = $tx->category?->parent?->name ? ($tx->category->parent->name . ' → ' . $tx->category->name) : ($tx->category?->name ?? 'Lainnya');
+            $catName = $tx->category?->parent?->name ? ($tx->category->parent->name.' → '.$tx->category->name) : ($tx->category?->name ?? 'Lainnya');
             $payName = $tx->paymentMethod?->name ?? 'Lainnya';
 
             if ($tx->type === TransactionType::INCOME) {

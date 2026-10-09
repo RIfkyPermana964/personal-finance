@@ -53,7 +53,10 @@ class IncomeController extends Controller
 
         $this->transactionService->createTransaction($request->user()->id, $data);
 
-        return redirect()->route('income.index')->with('success', 'Data pemasukan berhasil dicatat!');
+        $txDate = Carbon::parse($data['transaction_date']);
+
+        return redirect()->route('income.index', ['month' => $txDate->month, 'year' => $txDate->year])
+            ->with('success', 'Data pemasukan berhasil dicatat!');
     }
 
     public function update(StoreTransactionRequest $request, Transaction $income): RedirectResponse
@@ -65,15 +68,20 @@ class IncomeController extends Controller
 
         $this->transactionService->updateTransaction($income, $data);
 
-        return redirect()->route('income.index')->with('success', 'Data pemasukan berhasil diperbarui!');
+        $txDate = Carbon::parse($data['transaction_date']);
+
+        return redirect()->route('income.index', ['month' => $txDate->month, 'year' => $txDate->year])
+            ->with('success', 'Data pemasukan berhasil diperbarui!');
     }
 
     public function destroy(Request $request, Transaction $income): RedirectResponse
     {
         abort_if($income->user_id !== $request->user()->id, 403);
 
+        $txDate = Carbon::parse($income->transaction_date);
         $this->transactionService->deleteTransaction($income);
 
-        return redirect()->route('income.index')->with('success', 'Data pemasukan berhasil dihapus.');
+        return redirect()->route('income.index', ['month' => $txDate->month, 'year' => $txDate->year])
+            ->with('success', 'Data pemasukan berhasil dihapus.');
     }
 }

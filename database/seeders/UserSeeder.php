@@ -12,7 +12,7 @@ class UserSeeder extends Seeder
     {
         User::create([
             'name' => 'Admin Keuangan',
-            'email' => 'admin@finance.local',
+            'email' => 'admin@noc.id',
             'password' => Hash::make('password'),
             'currency' => 'IDR',
             'phone' => '081234567890',

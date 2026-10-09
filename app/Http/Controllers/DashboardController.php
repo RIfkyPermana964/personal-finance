@@ -37,6 +37,7 @@ class DashboardController extends Controller
 
         $allocationsData = $this->salaryAllocationService->getAllocationsForMonth($userId, $year, $month);
         $balanceData = $this->salaryAllocationService->getMonthlyBalanceData($userId, $year, $month);
+        $debtsSummary = $this->dashboardService->getDebtsSummary($userId);
 
         return view('dashboard.index', compact(
             'metrics',
@@ -47,6 +48,7 @@ class DashboardController extends Controller
             'expenseCategories',
             'allocationsData',
             'balanceData',
+            'debtsSummary',
             'month',
             'year'
         ));

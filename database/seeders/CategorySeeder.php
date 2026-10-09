@@ -34,35 +34,35 @@ class CategorySeeder extends Seeder
         $expenseGroups = [
             [
                 'parent' => ['name' => 'Kebutuhan Pokok & Makan', 'icon' => 'shopping-cart', 'color' => '#ef4444'],
-                'children' => ['Makan & Minum Harian', 'Belanja Sembako / Pasar', 'Air Galon & Gas', 'Snack & Kopi']
+                'children' => ['Makan & Minum Harian', 'Belanja Sembako / Pasar', 'Air Galon & Gas', 'Snack & Kopi'],
             ],
             [
                 'parent' => ['name' => 'Tagihan & Rumah Tangga', 'icon' => 'bolt', 'color' => '#f97316'],
-                'children' => ['Sewa Kos / Kontrakan', 'Listrik PLN', 'Internet & WiFi', 'Pulsa & Kuota', 'Iuran Kebersihan / Air']
+                'children' => ['Sewa Kos / Kontrakan', 'Listrik PLN', 'Internet & WiFi', 'Pulsa & Kuota', 'Iuran Kebersihan / Air'],
             ],
             [
                 'parent' => ['name' => 'Transportasi', 'icon' => 'truck', 'color' => '#eab308'],
-                'children' => ['Bensin / BBM', 'Parkir & Tol', 'Ojek Online / Angkutan', 'Servis Kendaraan']
+                'children' => ['Bensin / BBM', 'Parkir & Tol', 'Ojek Online / Angkutan', 'Servis Kendaraan'],
             ],
             [
                 'parent' => ['name' => 'Lifestyle & Hiburan', 'icon' => 'sparkles', 'color' => '#a855f7'],
-                'children' => ['Nongkrong & Kafe', 'Langganan Streaming', 'Gaming & Hobi', 'Liburan & Hiburan']
+                'children' => ['Nongkrong & Kafe', 'Langganan Streaming', 'Gaming & Hobi', 'Liburan & Hiburan'],
             ],
             [
                 'parent' => ['name' => 'Belanja & Pribadi', 'icon' => 'shopping-bag', 'color' => '#ec4899'],
-                'children' => ['Pakaian & Aksesoris', 'Barang Pribadi', 'Kebutuhan Rumah']
+                'children' => ['Pakaian & Aksesoris', 'Barang Pribadi', 'Kebutuhan Rumah'],
             ],
             [
                 'parent' => ['name' => 'Kesehatan & Pribadi', 'icon' => 'heart', 'color' => '#14b8a6'],
-                'children' => ['Obat & Vitamin', 'Dokter / Medis', 'Skincare & Grooming', 'Olahraga']
+                'children' => ['Obat & Vitamin', 'Dokter / Medis', 'Skincare & Grooming', 'Olahraga'],
             ],
             [
                 'parent' => ['name' => 'Keluarga & Sosial', 'icon' => 'user-group', 'color' => '#6366f1'],
-                'children' => ['Kirim Orang Tua', 'Sedekah & Zakat', 'Kondangan & Kado']
+                'children' => ['Kirim Orang Tua', 'Sedekah & Zakat', 'Kondangan & Kado'],
             ],
             [
                 'parent' => ['name' => 'Pengeluaran Lainnya', 'icon' => 'archive-box', 'color' => '#64748b'],
-                'children' => ['Biaya Admin Bank', 'Pengeluaran Tak Terduga']
+                'children' => ['Biaya Admin Bank', 'Pengeluaran Tak Terduga'],
             ],
         ];
 

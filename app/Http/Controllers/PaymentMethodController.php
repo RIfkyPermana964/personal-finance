@@ -22,7 +22,7 @@ class PaymentMethodController extends Controller
     {
         $data = $request->validated();
         $data['user_id'] = $request->user()->id;
-        $data['is_active'] = $request->boolean('is_active', true);
+        $data['is_active'] = true;
 
         PaymentMethod::create($data);
 
@@ -31,30 +31,24 @@ class PaymentMethodController extends Controller
 
     public function update(StorePaymentMethodRequest $request, PaymentMethod $paymentMethod): RedirectResponse
     {
-        if ($paymentMethod->user_id && $paymentMethod->user_id !== $request->user()->id) {
-            abort(403);
-        }
-
+        // Boleh edit semua metode termasuk data bawaan (global)
         $data = $request->validated();
-        $data['is_active'] = $request->boolean('is_active', true);
+        $data['is_active'] = true;
 
         $paymentMethod->update($data);
 
-        return redirect()->route('payment-methods.index')->with('success', 'Metode pembayaran berhasil diperbarui!');
+        return redirect()->route('payment-methods.index')->with('success', "Metode '{$paymentMethod->name}' berhasil diperbarui!");
     }
 
     public function destroy(Request $request, PaymentMethod $paymentMethod): RedirectResponse
     {
-        if ($paymentMethod->user_id && $paymentMethod->user_id !== $request->user()->id) {
-            abort(403);
-        }
-
-        if ($paymentMethod->transactions()->exists() || is_null($paymentMethod->user_id)) {
+        if ($paymentMethod->transactions()->exists()) {
+            // Ada transaksi terkait — nonaktifkan saja, jangan hapus (jaga integritas)
             $paymentMethod->update(['is_active' => false]);
-            $msg = 'Metode pembayaran dinonaktifkan untuk menjaga integritas data transaksi.';
+            $msg = "'{$paymentMethod->name}' dinonaktifkan karena sudah memiliki riwayat transaksi. Data historis tetap aman.";
         } else {
             $paymentMethod->delete();
-            $msg = 'Metode pembayaran berhasil dihapus.';
+            $msg = "Metode pembayaran '{$paymentMethod->name}' berhasil dihapus.";
         }
 
         return redirect()->route('payment-methods.index')->with('success', $msg);

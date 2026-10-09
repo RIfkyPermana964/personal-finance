@@ -15,10 +15,10 @@ class SavingGoalService
         return SavingGoal::with(['transactions' => function ($q) {
             $q->latest('transaction_date')->limit(5);
         }])
-        ->where('user_id', $userId)
-        ->orderByRaw("CASE WHEN status = 'active' THEN 1 WHEN status = 'completed' THEN 2 ELSE 3 END")
-        ->orderBy('target_date', 'asc')
-        ->get();
+            ->where('user_id', $userId)
+            ->orderByRaw("CASE WHEN status = 'active' THEN 1 WHEN status = 'completed' THEN 2 ELSE 3 END")
+            ->orderBy('target_date', 'asc')
+            ->get();
     }
 
     public function createGoal(int $userId, array $data): SavingGoal
@@ -59,7 +59,7 @@ class SavingGoalService
                 'payment_method_id' => $paymentMethodId,
                 'amount' => $amount,
                 'transaction_date' => $date,
-                'description' => $notes ?: 'Setoran Tabungan: ' . $goal->name,
+                'description' => $notes ?: 'Setoran Tabungan: '.$goal->name,
             ]);
 
             app(TransactionService::class)->syncSavingGoalBalance($goal->id);
@@ -78,7 +78,7 @@ class SavingGoalService
                 'payment_method_id' => $paymentMethodId,
                 'amount' => $amount,
                 'transaction_date' => $date,
-                'description' => $notes ?: 'Penarikan Tabungan: ' . $goal->name,
+                'description' => $notes ?: 'Penarikan Tabungan: '.$goal->name,
             ]);
 
             app(TransactionService::class)->syncSavingGoalBalance($goal->id);

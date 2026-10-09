@@ -65,7 +65,7 @@ class Transaction extends Model
     public function scopeInMonth($query, int $year, int $month)
     {
         return $query->whereYear('transaction_date', $year)
-                     ->whereMonth('transaction_date', $month);
+            ->whereMonth('transaction_date', $month);
     }
 
     public function scopeDateRange($query, $startDate, $endDate)
@@ -79,6 +79,7 @@ class Transaction extends Model
         if ($endDate) {
             return $query->where('transaction_date', '<=', $endDate);
         }
+
         return $query;
     }
 }

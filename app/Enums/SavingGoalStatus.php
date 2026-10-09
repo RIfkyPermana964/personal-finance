@@ -10,7 +10,7 @@ enum SavingGoalStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ACTIVE => 'Sedang Berjalan',
             self::COMPLETED => 'Tercapai',
             self::CANCELLED => 'Dibatalkan',
@@ -19,10 +19,10 @@ enum SavingGoalStatus: string
 
     public function badgeClass(): string
     {
-        return match($this) {
-            self::ACTIVE => 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-            self::COMPLETED => 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-            self::CANCELLED => 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
+        return match ($this) {
+            self::ACTIVE => 'bg-amber-50 text-amber-700 border-amber-200',
+            self::COMPLETED => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+            self::CANCELLED => 'bg-slate-100 text-slate-600 border-slate-200',
         };
     }
 }

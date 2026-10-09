@@ -44,28 +44,28 @@ class SalaryAllocationService
             ->where('type', TransactionType::INCOME)
             ->whereYear('transaction_date', $year)
             ->whereMonth('transaction_date', $month)
-            ->whereHas('paymentMethod', fn($q) => $q->where('type', PaymentMethodType::CASH))
+            ->whereHas('paymentMethod', fn ($q) => $q->where('type', PaymentMethodType::CASH))
             ->sum('amount');
 
         $cashOut = (float) Transaction::where('user_id', $userId)
             ->whereIn('type', [TransactionType::EXPENSE, TransactionType::SAVING_DEPOSIT])
             ->whereYear('transaction_date', $year)
             ->whereMonth('transaction_date', $month)
-            ->whereHas('paymentMethod', fn($q) => $q->where('type', PaymentMethodType::CASH))
+            ->whereHas('paymentMethod', fn ($q) => $q->where('type', PaymentMethodType::CASH))
             ->sum('amount');
 
         $bankIn = (float) Transaction::where('user_id', $userId)
             ->where('type', TransactionType::INCOME)
             ->whereYear('transaction_date', $year)
             ->whereMonth('transaction_date', $month)
-            ->whereHas('paymentMethod', fn($q) => $q->where('type', '!=', PaymentMethodType::CASH))
+            ->whereHas('paymentMethod', fn ($q) => $q->where('type', '!=', PaymentMethodType::CASH))
             ->sum('amount');
 
         $bankOut = (float) Transaction::where('user_id', $userId)
             ->whereIn('type', [TransactionType::EXPENSE, TransactionType::SAVING_DEPOSIT])
             ->whereYear('transaction_date', $year)
             ->whereMonth('transaction_date', $month)
-            ->whereHas('paymentMethod', fn($q) => $q->where('type', '!=', PaymentMethodType::CASH))
+            ->whereHas('paymentMethod', fn ($q) => $q->where('type', '!=', PaymentMethodType::CASH))
             ->sum('amount');
 
         $cashFinal = (float) $balance->cash_initial + $cashIn - $cashOut;
@@ -117,12 +117,19 @@ class SalaryAllocationService
     public function updateMonthlyBalance(int $userId, int $year, int $month, array $data): MonthlyBalance
     {
         $record = MonthlyBalance::firstOrNew(['user_id' => $userId, 'year' => $year, 'month' => $month]);
-        
-        if (isset($data['cash_initial'])) $record->cash_initial = $data['cash_initial'];
-        if (isset($data['bank_initial'])) $record->bank_initial = $data['bank_initial'];
-        if (isset($data['total_salary'])) $record->total_salary = $data['total_salary'];
+
+        if (isset($data['cash_initial'])) {
+            $record->cash_initial = $data['cash_initial'];
+        }
+        if (isset($data['bank_initial'])) {
+            $record->bank_initial = $data['bank_initial'];
+        }
+        if (isset($data['total_salary'])) {
+            $record->total_salary = $data['total_salary'];
+        }
 
         $record->save();
+
         return $record;
     }
 }

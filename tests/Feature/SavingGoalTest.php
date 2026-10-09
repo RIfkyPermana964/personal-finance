@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Enums\SavingGoalStatus;
-use App\Enums\TransactionType;
 use App\Models\SavingGoal;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
