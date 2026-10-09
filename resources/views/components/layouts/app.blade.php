@@ -290,31 +290,45 @@
 
     <!-- Global Delete Confirmation Modal -->
     <div x-show="deleteModal" x-cloak 
-         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-        <div @click.away="deleteModal = false" class="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 shadow-2xl space-y-5">
-            <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div @click.away="deleteModal = false" 
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             class="w-full max-w-sm bg-white border border-slate-200/90 rounded-3xl p-6 shadow-2xl space-y-5 text-center">
+            
+            <div class="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-100 text-rose-600 flex items-center justify-center mx-auto shadow-sm">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                 </svg>
             </div>
             
-            <div class="text-center space-y-2">
-                <h3 class="text-base font-bold text-slate-900">Konfirmasi Hapus Data</h3>
-                <p class="text-xs text-slate-500" x-text="deleteMessage"></p>
-                <p class="text-[11px] text-rose-600 font-medium">Tindakan ini tidak dapat dibatalkan!</p>
+            <div class="space-y-2">
+                <h3 class="text-base font-bold text-slate-900 tracking-tight">Hapus Data Ini?</h3>
+                <p class="text-xs text-slate-600 leading-relaxed font-medium" x-text="deleteMessage"></p>
+                <p class="text-[11px] text-rose-500 font-semibold bg-rose-50/60 py-1 px-2.5 rounded-lg inline-block">⚠️ Tindakan ini permanen dan tidak dapat dibatalkan</p>
             </div>
 
-            <div class="flex items-center justify-end gap-3 pt-2">
+            <div class="grid grid-cols-2 gap-2.5 pt-2">
                 <button type="button" @click="deleteModal = false" 
-                        class="px-4 py-2.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
+                        class="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
                     Batal
                 </button>
-                <form :action="deleteAction" method="POST" class="inline">
+                <form :action="deleteAction" method="POST" class="w-full">
                     @csrf
                     @method('DELETE')
                     <button type="submit" 
-                            class="px-4 py-2.5 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-sm transition cursor-pointer">
-                        Hapus Sekarang
+                            class="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-sm hover:shadow transition cursor-pointer">
+                        Ya, Hapus
                     </button>
                 </form>
             </div>
