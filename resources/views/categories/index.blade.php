@@ -68,23 +68,23 @@ class="space-y-6">
             @foreach ($expenseParents as $parent)
                 <div class="bg-white border border-slate-200/80 rounded-2xl p-5 space-y-3 shadow-xs group hover:border-rose-200 transition parent-category-card" data-id="{{ $parent->id }}">
                     <!-- Parent Header -->
-                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                        <div class="flex items-center gap-2.5">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3 gap-2">
+                        <div class="flex items-center gap-2.5 drag-handle-parent flex-1 cursor-grab active:cursor-grabbing select-none touch-none py-1 min-w-0" title="Tekan dan geser untuk ubah urutan kategori utama">
                             <!-- Drag Handle for Parent -->
-                            <div class="drag-handle-parent cursor-grab active:cursor-grabbing p-1.5 -ml-1 text-slate-300 hover:text-slate-600 active:text-indigo-600 transition flex items-center justify-center rounded-lg hover:bg-slate-100 touch-none" title="Geser untuk ubah urutan kategori utama">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="p-1 -ml-1 text-slate-400 hover:text-indigo-600 active:text-indigo-600 transition flex items-center justify-center rounded-lg hover:bg-slate-100 pointer-events-none">
+                                <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01"/>
                                 </svg>
                             </div>
-                            <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                            <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0 pointer-events-none">
+                                <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
                             </div>
-                            <div>
-                                <h4 class="text-sm font-bold text-slate-900">{{ $parent->name }}</h4>
+                            <div class="pointer-events-none truncate">
+                                <h4 class="text-sm font-bold text-slate-900 truncate">{{ $parent->name }}</h4>
                                 <span class="text-[10px] text-slate-400 font-medium subcategory-counter">{{ $parent->children->count() }} subkategori</span>
                             </div>
                         </div>
-                        <div class="flex items-center gap-1.5">
+                        <div class="flex items-center gap-1.5 flex-shrink-0">
                             <button @click="openEdit({{ $parent->id }}, '{{ addslashes($parent->name) }}', 'expense', null)"
                                     class="p-1.5 rounded-lg text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 bg-slate-100/80 transition cursor-pointer" title="Edit Kategori">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
@@ -100,16 +100,16 @@ class="space-y-6">
                     <div class="space-y-1.5 pl-1 subcategories-list min-h-[36px]" data-parent-id="{{ $parent->id }}">
                         @forelse ($parent->children as $child)
                             <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 border border-slate-100 text-xs hover:border-slate-300 hover:bg-slate-100/60 transition subcategory-item" data-id="{{ $child->id }}" data-parent-id="{{ $parent->id }}">
-                                <div class="flex items-center gap-2.5 drag-handle-sub flex-1 cursor-grab active:cursor-grabbing py-1 select-none">
+                                <div class="flex items-center gap-2.5 drag-handle-sub flex-1 cursor-grab active:cursor-grabbing py-1 select-none touch-none min-w-0" title="Tekan dan geser untuk ubah urutan subkategori">
                                     <!-- Drag Handle Icon & Text for Subcategory -->
-                                    <div class="p-1 -ml-1 text-slate-400 hover:text-indigo-600 flex items-center justify-center">
+                                    <div class="p-1 -ml-1 text-slate-400 hover:text-indigo-600 flex items-center justify-center pointer-events-none">
                                         <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01"/>
                                         </svg>
                                     </div>
-                                    <span class="text-slate-800 font-semibold pointer-events-none">↳ {{ $child->name }}</span>
+                                    <span class="text-slate-800 font-semibold pointer-events-none truncate">↳ {{ $child->name }}</span>
                                 </div>
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center gap-1 flex-shrink-0">
                                     <button @click="openEdit({{ $child->id }}, '{{ addslashes($child->name) }}', 'expense', {{ $child->parent_id }})"
                                             class="p-1 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-white border border-transparent hover:border-slate-200 cursor-pointer transition shadow-2xs" title="Edit Subkategori">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
@@ -134,21 +134,21 @@ class="space-y-6">
         <div id="incomeCategoriesList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             @foreach ($incomeCategories as $item)
                 <div class="p-4 rounded-2xl bg-white border border-slate-200/80 flex items-center justify-between hover:border-emerald-200 transition shadow-xs income-category-item" data-id="{{ $item->id }}">
-                    <div class="flex items-center gap-3 drag-handle-income flex-1 cursor-grab active:cursor-grabbing py-1 select-none">
+                    <div class="flex items-center gap-3 drag-handle-income flex-1 cursor-grab active:cursor-grabbing py-1 select-none touch-none min-w-0" title="Tekan dan geser untuk ubah urutan kategori pemasukan">
                         <!-- Drag Handle for Income Category -->
-                        <div class="p-1 -ml-1 text-slate-400 hover:text-emerald-600 transition flex items-center justify-center">
+                        <div class="p-1 -ml-1 text-slate-400 hover:text-emerald-600 transition flex items-center justify-center pointer-events-none">
                             <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01"/>
                             </svg>
                         </div>
                         <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 pointer-events-none">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
+                            <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
                         </div>
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-900 pointer-events-none">{{ $item->name }}</h4>
+                        <div class="pointer-events-none truncate">
+                            <h4 class="text-xs font-bold text-slate-900 truncate">{{ $item->name }}</h4>
                         </div>
                     </div>
-                    <div class="flex items-center gap-1.5">
+                    <div class="flex items-center gap-1.5 flex-shrink-0">
                         <button @click="openEdit({{ $item->id }}, '{{ addslashes($item->name) }}', 'income', null)"
                                 class="p-1.5 rounded-lg text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 bg-slate-100/80 transition cursor-pointer" title="Edit Kategori">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
@@ -255,6 +255,49 @@ class="space-y-6">
 
 </div>
 
+<!-- Drag and Drop Styling -->
+<style>
+    .drag-handle-parent,
+    .drag-handle-sub,
+    .drag-handle-income {
+        touch-action: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    .sortable-ghost {
+        opacity: 0.35 !important;
+        background-color: #e0e7ff !important;
+        border: 2px dashed #6366f1 !important;
+        border-radius: 1rem !important;
+    }
+    .sortable-chosen {
+        background-color: #ffffff !important;
+        box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.25) !important;
+        outline: 2px solid #6366f1 !important;
+        border-radius: 1rem !important;
+    }
+    .sortable-drag {
+        opacity: 0.95 !important;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2) !important;
+        cursor: grabbing !important;
+    }
+    .income-sortable-ghost {
+        opacity: 0.35 !important;
+        background-color: #d1fae5 !important;
+        border: 2px dashed #10b981 !important;
+        border-radius: 1rem !important;
+    }
+    .income-sortable-chosen {
+        background-color: #ffffff !important;
+        box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.25) !important;
+        outline: 2px solid #10b981 !important;
+        border-radius: 1rem !important;
+    }
+</style>
+
+<!-- Load SortableJS directly to guarantee immediate availability across all environments -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+
 <!-- SortableJS Reordering Script -->
 <script>
 (function() {
@@ -312,24 +355,26 @@ class="space-y-6">
         });
     }
 
-    function setupSortables() {
-        if (typeof window.Sortable === 'undefined') {
-            setTimeout(setupSortables, 50);
+    function initSortables() {
+        const SortableClass = window.Sortable;
+        if (!SortableClass) {
+            setTimeout(initSortables, 50);
             return;
         }
 
         // 1. Parent Expense Categories Sortable
         const parentsContainer = document.getElementById('parentCategoriesList');
-        if (parentsContainer) {
-            new window.Sortable(parentsContainer, {
+        if (parentsContainer && !parentsContainer._sortable) {
+            parentsContainer._sortable = new SortableClass(parentsContainer, {
                 draggable: '.parent-category-card',
                 handle: '.drag-handle-parent',
-                filter: '.subcategories-list, .subcategory-item, .drag-handle-sub, button',
-                preventOnFilter: false,
                 animation: 200,
-                ghostClass: 'opacity-40',
-                chosenClass: 'ring-2 ring-indigo-500 rounded-2xl shadow-lg',
-                onEnd: function() {
+                touchStartThreshold: 3,
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                dragClass: 'sortable-drag',
+                onEnd: function(evt) {
+                    if (evt.oldIndex === evt.newIndex) return;
                     const cards = parentsContainer.querySelectorAll('.parent-category-card');
                     const items = Array.from(cards).map((card, idx) => ({
                         id: parseInt(card.dataset.id),
@@ -343,7 +388,8 @@ class="space-y-6">
         // 2. Subcategories Sortables (supports reordering & moving between parents)
         const subLists = document.querySelectorAll('.subcategories-list');
         subLists.forEach(subList => {
-            new window.Sortable(subList, {
+            if (subList._sortable) return;
+            subList._sortable = new SortableClass(subList, {
                 group: 'subcategories',
                 draggable: '.subcategory-item',
                 handle: '.drag-handle-sub',
@@ -352,10 +398,14 @@ class="space-y-6">
                 animation: 200,
                 fallbackOnBody: true,
                 swapThreshold: 0.65,
-                ghostClass: 'opacity-40 bg-indigo-50 border-dashed border-2 border-indigo-400',
-                chosenClass: 'ring-2 ring-indigo-500 rounded-xl shadow-md',
+                touchStartThreshold: 3,
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                dragClass: 'sortable-drag',
                 onEnd: function(evt) {
                     updateSubcategoryCounters();
+
+                    if (evt.from === evt.to && evt.oldIndex === evt.newIndex) return;
 
                     const destParentId = evt.to.dataset.parentId;
                     const destItems = Array.from(evt.to.querySelectorAll('.subcategory-item')).map((el, idx) => ({
@@ -383,16 +433,19 @@ class="space-y-6">
 
         // 3. Income Categories Sortable
         const incomeContainer = document.getElementById('incomeCategoriesList');
-        if (incomeContainer) {
-            new window.Sortable(incomeContainer, {
+        if (incomeContainer && !incomeContainer._sortable) {
+            incomeContainer._sortable = new SortableClass(incomeContainer, {
                 draggable: '.income-category-item',
                 handle: '.drag-handle-income',
                 filter: 'button',
                 preventOnFilter: false,
                 animation: 200,
-                ghostClass: 'opacity-40',
-                chosenClass: 'ring-2 ring-emerald-500 rounded-2xl shadow-lg',
-                onEnd: function() {
+                touchStartThreshold: 3,
+                ghostClass: 'income-sortable-ghost',
+                chosenClass: 'income-sortable-chosen',
+                dragClass: 'sortable-drag',
+                onEnd: function(evt) {
+                    if (evt.oldIndex === evt.newIndex) return;
                     const items = Array.from(incomeContainer.querySelectorAll('.income-category-item')).map((el, idx) => ({
                         id: parseInt(el.dataset.id),
                         sort_order: idx + 1
@@ -404,9 +457,9 @@ class="space-y-6">
     }
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', setupSortables);
+        document.addEventListener('DOMContentLoaded', initSortables);
     } else {
-        setupSortables();
+        initSortables();
     }
 })();
 </script>
