@@ -56,13 +56,13 @@
                                 <span class="text-[10px] text-slate-400 font-medium">{{ $parent->children->count() }} subkategori</span>
                             </div>
                         </div>
-                        <div class="flex items-center gap-1 opacity-60 group-hover:opacity-100 transition">
+                        <div class="flex items-center gap-1.5">
                             <button @click="openEdit({{ $parent->id }}, '{{ addslashes($parent->name) }}', 'expense', null)"
-                                    class="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition cursor-pointer" title="Edit">
+                                    class="p-1.5 rounded-lg text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 bg-slate-100/80 transition cursor-pointer" title="Edit Kategori">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                             </button>
                             <button @click="$dispatch('open-delete', { action: '{{ route('categories.destroy', $parent->id) }}', message: 'Hapus kategori {{ addslashes($parent->name) }} beserta seluruh subkategorinya?' })"
-                                    class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer" title="Hapus">
+                                    class="p-1.5 rounded-lg text-slate-600 hover:text-rose-600 hover:bg-rose-50 bg-slate-100/80 transition cursor-pointer" title="Hapus Kategori">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                             </button>
                         </div>
@@ -71,16 +71,16 @@
                     <!-- Subkategori -->
                     <div class="space-y-1.5 pl-1">
                         @forelse ($parent->children as $child)
-                            <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 border border-slate-100 text-xs group/child hover:border-slate-200 transition">
+                            <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 border border-slate-100 text-xs hover:border-slate-300 hover:bg-slate-100/60 transition">
                                 <span class="text-slate-700 font-medium">↳ {{ $child->name }}</span>
-                                <div class="flex items-center gap-1 opacity-0 group-hover/child:opacity-100 transition">
+                                <div class="flex items-center gap-1">
                                     <button @click="openEdit({{ $child->id }}, '{{ addslashes($child->name) }}', 'expense', {{ $child->parent_id }})"
-                                            class="p-1 rounded text-slate-400 hover:text-indigo-600 cursor-pointer transition" title="Edit">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                            class="p-1 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-white border border-transparent hover:border-slate-200 cursor-pointer transition shadow-2xs" title="Edit Subkategori">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                                     </button>
                                     <button @click="$dispatch('open-delete', { action: '{{ route('categories.destroy', $child->id) }}', message: 'Hapus subkategori {{ addslashes($child->name) }}?' })"
-                                            class="p-1 rounded text-slate-400 hover:text-rose-600 cursor-pointer transition" title="Hapus">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                            class="p-1 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-white border border-transparent hover:border-slate-200 cursor-pointer transition shadow-2xs" title="Hapus Subkategori">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                     </button>
                                 </div>
                             </div>
@@ -97,7 +97,7 @@
     <div x-show="tab === 'income'" class="space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             @foreach ($incomeCategories as $item)
-                <div class="p-4 rounded-2xl bg-white border border-slate-200/80 flex items-center justify-between group hover:border-emerald-200 transition shadow-xs">
+                <div class="p-4 rounded-2xl bg-white border border-slate-200/80 flex items-center justify-between hover:border-emerald-200 transition shadow-xs">
                     <div class="flex items-center gap-3">
                         <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
@@ -106,13 +106,13 @@
                             <h4 class="text-xs font-bold text-slate-900">{{ $item->name }}</h4>
                         </div>
                     </div>
-                    <div class="flex items-center gap-1 opacity-50 group-hover:opacity-100 transition">
+                    <div class="flex items-center gap-1.5">
                         <button @click="openEdit({{ $item->id }}, '{{ addslashes($item->name) }}', 'income', null)"
-                                class="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition cursor-pointer" title="Edit">
+                                class="p-1.5 rounded-lg text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 bg-slate-100/80 transition cursor-pointer" title="Edit Kategori">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                         </button>
                         <button @click="$dispatch('open-delete', { action: '{{ route('categories.destroy', $item->id) }}', message: 'Hapus kategori pemasukan {{ addslashes($item->name) }}?' })"
-                                class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer" title="Hapus">
+                                class="p-1.5 rounded-lg text-slate-600 hover:text-rose-600 hover:bg-rose-50 bg-slate-100/80 transition cursor-pointer" title="Hapus Kategori">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                         </button>
                     </div>
