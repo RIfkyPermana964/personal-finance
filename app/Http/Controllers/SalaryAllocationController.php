@@ -49,6 +49,30 @@ class SalaryAllocationController extends Controller
             ->with('success', 'Pos pembagian gaji berhasil ditambahkan!');
     }
 
+    public function update(Request $request, SalaryAllocation $salaryAllocation): RedirectResponse
+    {
+        abort_if($salaryAllocation->user_id !== $request->user()->id, 403);
+
+        if ($request->has('amount')) {
+            $request->merge(['amount' => preg_replace('/\D/', '', (string) $request->amount)]);
+        }
+
+        $validated = $request->validate([
+            'item_name' => ['required', 'string', 'max:150'],
+            'amount' => ['required', 'numeric', 'min:1'],
+            'category_id' => ['nullable', 'exists:categories,id'],
+            'status' => ['required', 'in:unpaid,paid'],
+            'notes' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $this->allocationService->updateAllocation($salaryAllocation, $validated);
+
+        return redirect()->route('salary-allocations.index', [
+            'month' => $salaryAllocation->month,
+            'year' => $salaryAllocation->year,
+        ])->with('success', "Pos pengeluaran '{$salaryAllocation->item_name}' berhasil diperbarui!");
+    }
+
     public function toggle(Request $request, SalaryAllocation $salaryAllocation): RedirectResponse
     {
         abort_if($salaryAllocation->user_id !== $request->user()->id, 403);

@@ -1,6 +1,21 @@
 <x-layouts.app title="Pembagian Gaji & Saldo" header="Pembagian Gaji & Kesimpulan Saldo" subheader="Rencanakan alokasi gaji bulanan, tandai pos pengeluaran UNPAID/PAID, dan pantau saldo kas & bank">
 
-<div x-data="{ createModal: false, balanceModal: false }" class="space-y-6">
+<div x-data="{ 
+    createModal: false, 
+    balanceModal: false,
+    editModal: false,
+    editData: { id: null, item_name: '', amount: '', status: 'unpaid', notes: '' },
+    openEdit(id, name, amount, status, notes) {
+        this.editData = {
+            id: id,
+            item_name: name,
+            amount: formatRupiahInput(amount),
+            status: status || 'unpaid',
+            notes: notes || ''
+        };
+        this.editModal = true;
+    }
+}" class="space-y-6">
 
     <!-- Header Periode -->
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
@@ -150,10 +165,16 @@
                                         </form>
                                     </td>
                                     <td class="py-3.5 px-4 text-center">
-                                        <button @click="$dispatch('open-delete', { action: '{{ route('salary-allocations.destroy', $item->id) }}', message: 'Hapus pos pengeluaran {{ addslashes($item->item_name) }}?' })"
-                                                class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer" title="Hapus">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                        </button>
+                                        <div class="flex items-center justify-center gap-1">
+                                            <button @click="openEdit({{ $item->id }}, '{{ addslashes($item->item_name) }}', {{ $item->amount }}, '{{ $item->status }}', '{{ addslashes($item->notes ?? '') }}')"
+                                                    class="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition cursor-pointer" title="Edit Pos Pengeluaran">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                            </button>
+                                            <button @click="$dispatch('open-delete', { action: '{{ route('salary-allocations.destroy', $item->id) }}', message: 'Hapus pos pengeluaran {{ addslashes($item->item_name) }}?' })"
+                                                    class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer" title="Hapus">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -224,6 +245,48 @@
             <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
                 <button type="button" @click="createModal = false" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold cursor-pointer">Batal</button>
                 <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer">Simpan Pos</button>
+            </div>
+        </form>
+    </x-modal>
+
+    <!-- Modal: Edit Pos Pengeluaran -->
+    <x-modal name="editModal" title="Edit Pos Pengeluaran Gaji" maxWidth="md">
+        <form :action="'/salary-allocations/' + editData.id" method="POST" class="space-y-4">
+            @csrf
+            @method('PUT')
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Pos Pengeluaran *</label>
+                <input type="text" name="item_name" x-model="editData.item_name" required placeholder="Contoh: Belanja Bulanan, Kuota Internet, Bayar Kos"
+                       class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 text-xs focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Nominal Alokasi (Rp) *</label>
+                <div class="relative rounded-xl shadow-2xs">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 font-bold text-sm">Rp</div>
+                    <input type="text" inputmode="numeric" name="amount" x-model="editData.amount" x-money required placeholder="Contoh: 500.000"
+                           class="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 font-mono text-base font-semibold focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+                </div>
+                <p class="mt-1 text-[11px] text-slate-400">Titik otomatis ditambahkan saat mengetik</p>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Status Pembayaran</label>
+                <select name="status" x-model="editData.status" class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-indigo-500">
+                    <option value="unpaid">UNPAID (Belum Bayar)</option>
+                    <option value="paid">PAID (Sudah Terbayar)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Catatan (Opsional)</label>
+                <input type="text" name="notes" x-model="editData.notes" placeholder="Contoh: Sewa kos bulan ini"
+                       class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                <button type="button" @click="editModal = false" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold cursor-pointer">Batal</button>
+                <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer">Simpan Perubahan</button>
             </div>
         </form>
     </x-modal>

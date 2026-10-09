@@ -100,14 +100,14 @@ class="space-y-6">
                     <div class="space-y-1.5 pl-1 subcategories-list min-h-[36px]" data-parent-id="{{ $parent->id }}">
                         @forelse ($parent->children as $child)
                             <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 border border-slate-100 text-xs hover:border-slate-300 hover:bg-slate-100/60 transition subcategory-item" data-id="{{ $child->id }}" data-parent-id="{{ $parent->id }}">
-                                <div class="flex items-center gap-2">
-                                    <!-- Drag Handle for Subcategory -->
-                                    <div class="drag-handle-sub cursor-grab active:cursor-grabbing text-slate-300 hover:text-slate-600 active:text-indigo-600 p-1 -ml-1 rounded transition flex items-center justify-center touch-none" title="Geser urutan subkategori">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="flex items-center gap-2.5 drag-handle-sub flex-1 cursor-grab active:cursor-grabbing py-1 select-none">
+                                    <!-- Drag Handle Icon & Text for Subcategory -->
+                                    <div class="p-1 -ml-1 text-slate-400 hover:text-indigo-600 flex items-center justify-center">
+                                        <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01"/>
                                         </svg>
                                     </div>
-                                    <span class="text-slate-700 font-medium">↳ {{ $child->name }}</span>
+                                    <span class="text-slate-800 font-semibold pointer-events-none">↳ {{ $child->name }}</span>
                                 </div>
                                 <div class="flex items-center gap-1">
                                     <button @click="openEdit({{ $child->id }}, '{{ addslashes($child->name) }}', 'expense', {{ $child->parent_id }})"
@@ -134,18 +134,18 @@ class="space-y-6">
         <div id="incomeCategoriesList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             @foreach ($incomeCategories as $item)
                 <div class="p-4 rounded-2xl bg-white border border-slate-200/80 flex items-center justify-between hover:border-emerald-200 transition shadow-xs income-category-item" data-id="{{ $item->id }}">
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3 drag-handle-income flex-1 cursor-grab active:cursor-grabbing py-1 select-none">
                         <!-- Drag Handle for Income Category -->
-                        <div class="drag-handle-income cursor-grab active:cursor-grabbing text-slate-300 hover:text-slate-600 active:text-emerald-600 p-1 -ml-1 rounded transition flex items-center justify-center touch-none" title="Geser urutan kategori pemasukan">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="p-1 -ml-1 text-slate-400 hover:text-emerald-600 transition flex items-center justify-center">
+                            <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01"/>
                             </svg>
                         </div>
-                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 pointer-events-none">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
                         </div>
                         <div>
-                            <h4 class="text-xs font-bold text-slate-900">{{ $item->name }}</h4>
+                            <h4 class="text-xs font-bold text-slate-900 pointer-events-none">{{ $item->name }}</h4>
                         </div>
                     </div>
                     <div class="flex items-center gap-1.5">
@@ -322,7 +322,10 @@ class="space-y-6">
         const parentsContainer = document.getElementById('parentCategoriesList');
         if (parentsContainer) {
             new window.Sortable(parentsContainer, {
+                draggable: '.parent-category-card',
                 handle: '.drag-handle-parent',
+                filter: '.subcategories-list, .subcategory-item, .drag-handle-sub, button',
+                preventOnFilter: false,
                 animation: 200,
                 ghostClass: 'opacity-40',
                 chosenClass: 'ring-2 ring-indigo-500 rounded-2xl shadow-lg',
@@ -342,9 +345,14 @@ class="space-y-6">
         subLists.forEach(subList => {
             new window.Sortable(subList, {
                 group: 'subcategories',
+                draggable: '.subcategory-item',
                 handle: '.drag-handle-sub',
+                filter: 'button',
+                preventOnFilter: false,
                 animation: 200,
-                ghostClass: 'opacity-40',
+                fallbackOnBody: true,
+                swapThreshold: 0.65,
+                ghostClass: 'opacity-40 bg-indigo-50 border-dashed border-2 border-indigo-400',
                 chosenClass: 'ring-2 ring-indigo-500 rounded-xl shadow-md',
                 onEnd: function(evt) {
                     updateSubcategoryCounters();
@@ -377,7 +385,10 @@ class="space-y-6">
         const incomeContainer = document.getElementById('incomeCategoriesList');
         if (incomeContainer) {
             new window.Sortable(incomeContainer, {
+                draggable: '.income-category-item',
                 handle: '.drag-handle-income',
+                filter: 'button',
+                preventOnFilter: false,
                 animation: 200,
                 ghostClass: 'opacity-40',
                 chosenClass: 'ring-2 ring-emerald-500 rounded-2xl shadow-lg',

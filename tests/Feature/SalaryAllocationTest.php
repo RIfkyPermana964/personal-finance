@@ -55,4 +55,33 @@ class SalaryAllocationTest extends TestCase
         $allocation->refresh();
         $this->assertEquals('unpaid', $allocation->status);
     }
+
+    public function test_user_can_update_salary_allocation(): void
+    {
+        $user = User::factory()->create();
+        $allocation = SalaryAllocation::create([
+            'user_id' => $user->id,
+            'month' => 8,
+            'year' => 2026,
+            'item_name' => 'Netflix',
+            'amount' => 120000.00,
+            'status' => 'unpaid',
+            'notes' => 'Old note',
+        ]);
+
+        $response = $this->actingAs($user)->put("/salary-allocations/{$allocation->id}", [
+            'item_name' => 'Netflix Premium 4K',
+            'amount' => 186000.00,
+            'status' => 'paid',
+            'notes' => 'Paket keluarga 4K',
+        ]);
+
+        $response->assertRedirect('/salary-allocations?month=8&year=2026');
+
+        $allocation->refresh();
+        $this->assertEquals('Netflix Premium 4K', $allocation->item_name);
+        $this->assertEquals(186000.00, $allocation->amount);
+        $this->assertEquals('paid', $allocation->status);
+        $this->assertEquals('Paket keluarga 4K', $allocation->notes);
+    }
 }

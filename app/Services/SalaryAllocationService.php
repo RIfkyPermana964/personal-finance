@@ -109,6 +109,28 @@ class SalaryAllocationService
         return $allocation;
     }
 
+    public function updateAllocation(SalaryAllocation $allocation, array $data): SalaryAllocation
+    {
+        $status = $data['status'] ?? $allocation->status;
+        $paidDate = $allocation->paid_date;
+        if ($status === 'paid' && ! $paidDate) {
+            $paidDate = Carbon::now()->toDateString();
+        } elseif ($status === 'unpaid') {
+            $paidDate = null;
+        }
+
+        $allocation->update([
+            'item_name' => $data['item_name'],
+            'amount' => $data['amount'],
+            'category_id' => $data['category_id'] ?? null,
+            'status' => $status,
+            'paid_date' => $paidDate,
+            'notes' => $data['notes'] ?? null,
+        ]);
+
+        return $allocation;
+    }
+
     public function deleteAllocation(SalaryAllocation $allocation): bool
     {
         return (bool) $allocation->delete();

@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
     // Pembagian Gaji & Kesimpulan Saldo
     Route::get('/salary-allocations', [SalaryAllocationController::class, 'index'])->name('salary-allocations.index');
     Route::post('/salary-allocations', [SalaryAllocationController::class, 'store'])->name('salary-allocations.store');
+    Route::put('/salary-allocations/{salary_allocation}', [SalaryAllocationController::class, 'update'])->name('salary-allocations.update');
     Route::patch('/salary-allocations/{salary_allocation}/toggle', [SalaryAllocationController::class, 'toggle'])->name('salary-allocations.toggle');
     Route::post('/salary-allocations/balance', [SalaryAllocationController::class, 'updateBalance'])->name('salary-allocations.balance');
     Route::delete('/salary-allocations/{salary_allocation}', [SalaryAllocationController::class, 'destroy'])->name('salary-allocations.destroy');
