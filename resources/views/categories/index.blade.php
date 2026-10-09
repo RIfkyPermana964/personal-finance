@@ -30,14 +30,14 @@ class="space-y-6">
     <!-- Action Bar -->
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
         <!-- Tab Switch -->
-        <div class="flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200">
+        <div class="flex items-center gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
             <button @click="tab = 'expense'"
-                    :class="tab === 'expense' ? 'bg-white text-rose-700 shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900 font-medium'"
+                    :class="tab === 'expense' ? 'bg-white dark:bg-[#151E2E] text-rose-700 dark:text-rose-400 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'"
                     class="px-4 py-2 rounded-lg text-xs transition cursor-pointer">
                 🏷️ Kategori Pengeluaran
             </button>
             <button @click="tab = 'income'"
-                    :class="tab === 'income' ? 'bg-white text-emerald-700 shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900 font-medium'"
+                    :class="tab === 'income' ? 'bg-white dark:bg-[#151E2E] text-emerald-700 dark:text-emerald-400 shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'"
                     class="px-4 py-2 rounded-lg text-xs transition cursor-pointer">
                 💰 Kategori Pemasukan
             </button>
@@ -51,14 +51,14 @@ class="space-y-6">
     </div>
 
     <!-- Drag & Drop Instruction Banner -->
-    <div class="flex items-start sm:items-center gap-3 p-4 rounded-2xl bg-indigo-50/80 border border-indigo-100 text-indigo-950 text-xs shadow-2xs">
+    <div class="flex items-start sm:items-center gap-3 p-4 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/60 text-indigo-950 dark:text-indigo-200 text-xs shadow-2xs">
         <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 font-bold shadow-xs">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01"/>
             </svg>
         </div>
         <div class="flex-1 leading-relaxed">
-            <span class="font-bold">Sesuaikan Urutan (Drag & Drop):</span> Tekan dan geser ikon gagang <span class="font-mono bg-white px-1.5 py-0.5 rounded border border-indigo-200 text-indigo-700 font-bold">⋮⋮</span> pada kategori utama atau subkategori (misal: geser <em>Makanan / Kebutuhan Pokok</em> ke urutan paling atas). Urutan baru otomatis tersimpan dan menjadi prioritas teratas saat mencatat transaksi.
+            <span class="font-bold">Sesuaikan Urutan (Drag & Drop):</span> Tekan dan geser ikon gagang <span class="font-mono bg-white dark:bg-[#151E2E] px-1.5 py-0.5 rounded border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 font-bold">⋮⋮</span> pada kategori utama atau subkategori (misal: geser <em>Makanan / Kebutuhan Pokok</em> ke urutan paling atas). Urutan baru otomatis tersimpan dan menjadi prioritas teratas saat mencatat transaksi.
         </div>
     </div>
 
@@ -292,6 +292,24 @@ class="space-y-6">
         box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.25) !important;
         outline: 2px solid #10b981 !important;
         border-radius: 1rem !important;
+    }
+    .dark .sortable-ghost {
+        background-color: #1e1b4b !important;
+        border-color: #818cf8 !important;
+    }
+    .dark .sortable-chosen {
+        background-color: #151e2e !important;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+        outline: 2px solid #818cf8 !important;
+    }
+    .dark .income-sortable-ghost {
+        background-color: #064e3b !important;
+        border-color: #34d399 !important;
+    }
+    .dark .income-sortable-chosen {
+        background-color: #151e2e !important;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+        outline: 2px solid #34d399 !important;
     }
 </style>
 

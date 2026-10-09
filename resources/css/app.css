@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../views/**/*.blade.php';
@@ -14,6 +16,13 @@ body {
     background-color: #F8FAFC;
     color: #0F172A;
     -webkit-font-smoothing: antialiased;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Dark Mode Body */
+.dark body {
+    background-color: #0B0F19;
+    color: #F8FAFC;
 }
 
 /* Custom Clean Scrollbars */
@@ -32,12 +41,28 @@ body {
     background: #94A3B8;
 }
 
+.dark ::-webkit-scrollbar-track {
+    background: #0B0F19;
+}
+.dark ::-webkit-scrollbar-thumb {
+    background: #1E293B;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #334155;
+}
+
 /* Modern Card Utilities */
 .app-card {
     background-color: #FFFFFF;
     border: 1px solid #E2E8F0;
     border-radius: 1rem;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+}
+
+.dark .app-card {
+    background-color: #151E2E;
+    border-color: #1E293B;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
 .app-card-hover {
@@ -47,4 +72,89 @@ body {
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
     transform: translateY(-2px);
     border-color: #CBD5E1;
+}
+
+.dark .app-card-hover:hover {
+    border-color: #334155;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+
+/* Base Dark Mode Support for Standard Elements */
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="file"]),
+.dark select,
+.dark textarea {
+    background-color: #151E2E !important;
+    border-color: #1E293B !important;
+    color: #F8FAFC !important;
+}
+
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="file"]):focus,
+.dark select:focus,
+.dark textarea:focus {
+    border-color: #6366F1 !important;
+    background-color: #182234 !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+    color: #64748B !important;
+}
+
+.dark select option {
+    background-color: #151E2E;
+    color: #F8FAFC;
+}
+
+/* Dark Mode Base Overrides for existing utility classes */
+.dark .bg-white {
+    background-color: #151E2E !important;
+}
+
+.dark .bg-slate-50 {
+    background-color: #0B0F19 !important;
+}
+
+.dark .bg-slate-100 {
+    background-color: #1E293B !important;
+}
+
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-slate-200\/80,
+.dark .border-slate-200\/90 {
+    border-color: #1E293B !important;
+}
+
+.dark .text-slate-900 {
+    color: #F8FAFC !important;
+}
+
+.dark .text-slate-800 {
+    color: #F1F5F9 !important;
+}
+
+.dark .text-slate-700 {
+    color: #E2E8F0 !important;
+}
+
+.dark .text-slate-600 {
+    color: #CBD5E1 !important;
+}
+
+.dark .text-slate-500 {
+    color: #94A3B8 !important;
+}
+
+.dark .hover\:bg-slate-50:hover,
+.dark .hover\:bg-slate-100:hover {
+    background-color: #1E293B !important;
+}
+
+.dark .hover\:bg-slate-200:hover {
+    background-color: #334155 !important;
+}
+
+.dark .hover\:text-slate-900:hover,
+.dark .hover\:text-slate-800:hover {
+    color: #FFFFFF !important;
 }

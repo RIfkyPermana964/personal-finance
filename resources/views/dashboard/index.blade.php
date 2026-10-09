@@ -372,18 +372,21 @@
         @endif
     </div>
 
-    <!-- Chart.js Scripts Initialization with Light Aesthetic -->
+    <!-- Chart.js Scripts Initialization with Light & Dark Aesthetic -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Chart Defaults for clean Light Theme
-            Chart.defaults.color = '#64748B';
-            Chart.defaults.borderColor = '#F1F5F9';
+            const isDark = document.documentElement.classList.contains('dark');
+            Chart.defaults.color = isDark ? '#94A3B8' : '#64748B';
+            Chart.defaults.borderColor = isDark ? '#1E293B' : '#F1F5F9';
             Chart.defaults.font.family = "'Plus Jakarta Sans', system-ui, sans-serif";
+
+            let trendChart = null;
+            let categoryChart = null;
 
             // 1. Monthly Trend Bar Chart
             const trendCtx = document.getElementById('monthlyTrendChart');
             if (trendCtx) {
-                new Chart(trendCtx, {
+                trendChart = new Chart(trendCtx, {
                     type: 'bar',
                     data: {
                         labels: {!! json_encode($monthlyTrends['labels']) !!},
@@ -439,7 +442,7 @@
                                 beginAtZero: true,
                                 suggestedMin: 0,
                                 suggestedMax: 1000000,
-                                grid: { color: '#F1F5F9' },
+                                grid: { color: isDark ? '#1E293B' : '#F1F5F9' },
                                 ticks: {
                                     precision: 0,
                                     callback: function(value) {
@@ -467,7 +470,7 @@
             // 2. Expense Category Doughnut Chart
             const categoryCtx = document.getElementById('expenseCategoryChart');
             if (categoryCtx) {
-                new Chart(categoryCtx, {
+                categoryChart = new Chart(categoryCtx, {
                     type: 'doughnut',
                     data: {
                         labels: {!! json_encode($expenseCategories['labels']) !!},
@@ -475,7 +478,7 @@
                             data: {!! json_encode($expenseCategories['data']) !!},
                             backgroundColor: {!! json_encode($expenseCategories['colors']) !!},
                             borderWidth: 2,
-                            borderColor: '#FFFFFF',
+                            borderColor: isDark ? '#151E2E' : '#FFFFFF',
                             hoverOffset: 4
                         }]
                     },
@@ -506,6 +509,21 @@
                     }
                 });
             }
+
+            // Dynamically update charts on theme change event
+            window.addEventListener('theme-changed', (e) => {
+                const dark = e.detail.dark;
+                Chart.defaults.color = dark ? '#94A3B8' : '#64748B';
+                Chart.defaults.borderColor = dark ? '#1E293B' : '#F1F5F9';
+                if (trendChart) {
+                    trendChart.options.scales.y.grid.color = dark ? '#1E293B' : '#F1F5F9';
+                    trendChart.update();
+                }
+                if (categoryChart) {
+                    categoryChart.data.datasets[0].borderColor = dark ? '#151E2E' : '#FFFFFF';
+                    categoryChart.update();
+                }
+            });
         });
     </script>
 </x-layouts.app>
